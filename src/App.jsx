@@ -250,8 +250,10 @@ const AppCore = ({ user }) => {
     const [currentWeek, setCurrentWeek] = useState(1);
     const [journalEntries, setJournalEntries] = useState({});
     const [loading, setLoading] = useState(true);
-    const [remindersEnabled, setRemindersEnabled] = useState(false);
-    const [reminderTime, setReminderTime] = useState('08:00');
+    const [reminders, setReminders] = useState([
+        { enabled: false, time: '08:00' },
+        { enabled: false, time: '18:00' }
+    ]);
     const [modalData, setModalData] = useState(null);
     const [modalType, setModalType] = useState(null);
     const [journalView, setJournalView] = useState('list');
@@ -289,38 +291,44 @@ const AppCore = ({ user }) => {
 
     // Reminder Logic
     useEffect(() => {
-        const enabled = localStorage.getItem('remindersEnabled') === 'true';
-        const time = localStorage.getItem('reminderTime') || '08:00';
-        setRemindersEnabled(enabled);
-        setReminderTime(time);
+        const savedReminders = localStorage.getItem('reminders');
+        if (savedReminders) {
+            setReminders(JSON.parse(savedReminders));
+        }
     }, []);
 
     useEffect(() => {
         const checkReminders = () => {
-            if (!remindersEnabled || Notification.permission !== 'granted') return;
+            if (Notification.permission !== 'granted') return;
 
             const now = new Date();
             const todayStr = now.toISOString().split('T')[0];
-            const lastNotificationDate = localStorage.getItem('lastNotificationDate');
 
-            if (lastNotificationDate === todayStr) return; 
+            reminders.forEach((reminder, index) => {
+                if (!reminder.enabled) return;
 
-            const [hours, minutes] = reminderTime.split(':');
-            const reminderDate = new Date();
-            reminderDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+                const lastNotificationKey = `lastNotificationDate_${index}`;
+                const lastNotificationDate = localStorage.getItem(lastNotificationKey);
 
-            if (now >= reminderDate) {
-                new Notification("Athlete's Master Key", { 
-                    body: "Time for your daily mental drill! 🧠",
-                    icon: "/favicon.ico" 
-                });
-                localStorage.setItem('lastNotificationDate', todayStr);
-            }
+                if (lastNotificationDate === todayStr) return;
+
+                const [hours, minutes] = reminder.time.split(':');
+                const reminderDate = new Date();
+                reminderDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+                if (now >= reminderDate) {
+                    new Notification("Athlete's Master Key", { 
+                        body: "Time for your daily mental drill! 🧠",
+                        icon: "/favicon.ico" 
+                    });
+                    localStorage.setItem(lastNotificationKey, todayStr);
+                }
+            });
         };
 
         const intervalId = setInterval(checkReminders, 60000); 
         return () => clearInterval(intervalId);
-    }, [remindersEnabled, reminderTime]);
+    }, [reminders]);
     
     const handleOpenReminders = async () => {
         if (!('Notification' in window)) {
@@ -332,33 +340,28 @@ const AppCore = ({ user }) => {
             alert('Notifications are blocked. Please enable them in your browser or system settings to use this feature.');
             return;
         }
-
-        if (Notification.permission === 'default') {
-            const permission = await Notification.requestPermission();
-            if (permission !== 'granted') {
-                alert('Permission for notifications was not granted. You can try again later from the reminder settings.');
-                return;
-            }
-        }
         
         setModalType('reminder');
     };
 
-    const handleSaveReminder = (time, enabled) => {
-        localStorage.setItem('remindersEnabled', enabled);
-        localStorage.setItem('reminderTime', time);
-        setRemindersEnabled(enabled);
-        setReminderTime(time);
-        closeModal();
-    };
+    const handleSaveReminders = async (newReminders) => {
+        const wantsToEnable = newReminders.some(r => r.enabled);
 
-    const format12Hour = (time24) => {
-        if (!time24) return '';
-        const [hours, minutes] = time24.split(':');
-        const h = parseInt(hours);
-        const suffix = h >= 12 ? 'PM' : 'AM';
-        const hour12 = ((h + 11) % 12 + 1);
-        return `${hour12}:${minutes} ${suffix}`;
+        if (wantsToEnable && Notification.permission === 'default') {
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                alert('Permission for notifications was not granted. Reminders will remain off.');
+                const disabledReminders = newReminders.map(r => ({...r, enabled: false}));
+                localStorage.setItem('reminders', JSON.stringify(disabledReminders));
+                setReminders(disabledReminders);
+                closeModal();
+                return;
+            }
+        }
+        
+        localStorage.setItem('reminders', JSON.stringify(newReminders));
+        setReminders(newReminders);
+        closeModal();
     };
 
     // Speech, and other handlers
@@ -409,26 +412,39 @@ const AppCore = ({ user }) => {
         if (!modalType) return null;
         if (modalType === 'reminder') {
             const ReminderModal = () => {
-                const [tempTime, setTempTime] = useState(reminderTime);
-                const [tempEnabled, setTempEnabled] = useState(remindersEnabled);
+                const [tempReminders, setTempReminders] = useState(reminders);
+
+                const handleToggle = (index) => {
+                    const newReminders = [...tempReminders];
+                    newReminders[index].enabled = !newReminders[index].enabled;
+                    setTempReminders(newReminders);
+                };
+
+                const handleTimeChange = (index, time) => {
+                    const newReminders = [...tempReminders];
+                    newReminders[index].time = time;
+                    setTempReminders(newReminders);
+                };
 
                 return (
                     <Modal onClose={closeModal} size="md">
                         <h2 className="text-3xl font-bold text-sky-400 mb-4">Daily Reminders</h2>
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between bg-slate-900/50 p-3 rounded-lg">
-                                <label htmlFor="reminder-toggle" className="font-semibold">Enable Reminders</label>
-                                <div className="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="reminder-toggle" className="sr-only peer" checked={tempEnabled} onChange={() => setTempEnabled(!tempEnabled)} />
-                                    <div className="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                        {tempReminders.map((reminder, index) => (
+                             <div key={index} className="space-y-4 bg-slate-900/50 p-4 rounded-lg mb-4">
+                                <div className="flex items-center justify-between">
+                                    <label htmlFor={`reminder-toggle-${index}`} className="font-semibold text-lg">{`Reminder ${index + 1}`}</label>
+                                    <div className="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id={`reminder-toggle-${index}`} className="sr-only peer" checked={reminder.enabled} onChange={() => handleToggle(index)} />
+                                        <div className="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                                    </div>
+                                </div>
+                                 <div className={`flex items-center justify-between transition-opacity ${reminder.enabled ? 'opacity-100' : 'opacity-50'}`}>
+                                    <label htmlFor={`reminder-time-${index}`} className="font-semibold">Time</label>
+                                    <input type="time" id={`reminder-time-${index}`} disabled={!reminder.enabled} value={reminder.time} onChange={e => handleTimeChange(index, e.target.value)} className="bg-slate-700 border border-slate-600 rounded-md p-1"/>
                                 </div>
                             </div>
-                             <div className={`flex items-center justify-between bg-slate-900/50 p-3 rounded-lg transition-opacity ${tempEnabled ? 'opacity-100' : 'opacity-50'}`}>
-                                <label htmlFor="reminder-time" className="font-semibold">Reminder Time</label>
-                                <input type="time" id="reminder-time" disabled={!tempEnabled} value={tempTime} onChange={e => setTempTime(e.target.value)} className="bg-slate-700 border border-slate-600 rounded-md p-1"/>
-                            </div>
-                        </div>
-                        <button onClick={() => handleSaveReminder(tempTime, tempEnabled)} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-lg mt-6">Save Settings</button>
+                        ))}
+                        <button onClick={() => handleSaveReminders(tempReminders)} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-lg mt-6">Save Settings</button>
                     </Modal>
                 )
             }
@@ -502,6 +518,5 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
-
 
 
