@@ -107,7 +107,7 @@ const Modal = ({ children, onClose, size = 'lg' }) => (
     </div>
 );
 
-const Header = ({ currentWeek, onLogout }) => {
+const Header = ({ currentWeek, onLogout, onOpenReminders }) => {
     const totalWeeks = courseContent.length - 2; // Exclude intro and conclusion for progress
     const progress = currentWeek > 1 ? ((currentWeek - 1) / totalWeeks) * 100 : 0;
     
@@ -115,7 +115,10 @@ const Header = ({ currentWeek, onLogout }) => {
         <header className="w-full max-w-4xl mx-auto p-4 sticky top-0 z-10 bg-slate-900/80 backdrop-blur-lg">
             <div className="text-center mb-2 relative">
                 <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400">Athlete's Master Key</h1>
-                <button onClick={onLogout} className="absolute top-1/2 right-0 -translate-y-1/2 p-2 text-slate-400 hover:text-white"><LogOut size={20} /></button>
+                <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center space-x-2">
+                    <button onClick={onOpenReminders} className="p-2 text-slate-400 hover:text-white"><Bell size={20} /></button>
+                    <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white"><LogOut size={20} /></button>
+                </div>
             </div>
             <div className="w-full bg-slate-700 rounded-full h-2.5"><div className="bg-gradient-to-r from-teal-400 to-sky-500 h-2.5 rounded-full transition-all duration-500" style={{ width: `${progress}%` }}></div></div>
             <p className="text-center text-sky-300 mt-2 text-sm font-semibold">{currentWeek <= 8 ? `Week ${currentWeek} of 8` : 'Course Complete!'}</p>
@@ -294,7 +297,7 @@ const AppCore = ({ user }) => {
 
     useEffect(() => {
         const checkReminders = () => {
-            if (!remindersEnabled) return;
+            if (!remindersEnabled || Notification.permission !== 'granted') return;
 
             const now = new Date();
             const todayStr = now.toISOString().split('T')[0];
@@ -307,10 +310,11 @@ const AppCore = ({ user }) => {
             reminderDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
             if (now >= reminderDate) {
-                if (Notification.permission === 'granted') {
-                    new Notification("Athlete's Master Key", { body: "Time for your daily mental drill! 🧠" });
-                    localStorage.setItem('lastNotificationDate', todayStr);
-                }
+                new Notification("Athlete's Master Key", { 
+                    body: "Time for your daily mental drill! 🧠",
+                    icon: "/favicon.ico" 
+                });
+                localStorage.setItem('lastNotificationDate', todayStr);
             }
         };
 
@@ -320,14 +324,17 @@ const AppCore = ({ user }) => {
 
     const handleSaveReminder = async (time, enabled) => {
         if (enabled && Notification.permission === 'denied') {
-            alert("Notifications are blocked. Please enable them in your browser settings to receive reminders.");
+            alert("Notifications are blocked. Please enable them in your browser or system settings to receive reminders.");
             return;
         }
 
         if (enabled && Notification.permission === 'default') {
             const permission = await Notification.requestPermission();
             if (permission !== 'granted') {
-                alert("Permission for notifications was not granted.");
+                alert("Permission for notifications was not granted. Reminders will not be sent.");
+                localStorage.setItem('remindersEnabled', false);
+                setRemindersEnabled(false);
+                closeModal();
                 return;
             }
         }
@@ -457,15 +464,11 @@ const AppCore = ({ user }) => {
     
     return (
         <div className="bg-slate-900 text-white min-h-screen font-sans">
-            <Header currentWeek={currentWeek} onLogout={handleLogout} />
+            <Header currentWeek={currentWeek} onLogout={handleLogout} onOpenReminders={() => setModalType('reminder')} />
             <main className="w-full max-w-4xl mx-auto p-4">
                 {courseContent.map(weekData => ( <WeekCard key={weekData.week} weekData={weekData} currentWeek={currentWeek} onLearnMore={handleLearnMore} onOpenJournal={handleOpenJournal} onSetWeek={setCurrentWeek} onAdvanceWeek={handleAdvanceWeek} journalCount={(journalEntries[weekData.week] || []).length} /> ))}
             </main>
             <footer className="text-center p-4">
-                <button onClick={() => setModalType('reminder')} className={`${remindersEnabled ? 'text-teal-400' : 'text-slate-400'} hover:text-white text-sm mb-2 flex items-center mx-auto transition-colors`}>
-                    <Bell size={16} className="mr-2"/>
-                    {remindersEnabled ? `Reminders On (${format12Hour(reminderTime)})` : "Set Daily Reminder"}
-                </button>
                 <p className="text-slate-500 text-xs">Your progress is saved automatically.</p>
             </footer>
             {renderModalContent()}
@@ -493,4 +496,5 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
 
