@@ -318,10 +318,20 @@ const AppCore = ({ user }) => {
         return () => clearInterval(intervalId);
     }, [remindersEnabled, reminderTime]);
 
-    const handleSaveReminder = (time, enabled) => {
-        if (enabled && Notification.permission === 'default') {
-            Notification.requestPermission();
+    const handleSaveReminder = async (time, enabled) => {
+        if (enabled && Notification.permission === 'denied') {
+            alert("Notifications are blocked. Please enable them in your browser settings to receive reminders.");
+            return;
         }
+
+        if (enabled && Notification.permission === 'default') {
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                alert("Permission for notifications was not granted.");
+                return;
+            }
+        }
+        
         localStorage.setItem('remindersEnabled', enabled);
         localStorage.setItem('reminderTime', time);
         setRemindersEnabled(enabled);
@@ -483,3 +493,4 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
