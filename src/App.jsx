@@ -321,24 +321,30 @@ const AppCore = ({ user }) => {
         const intervalId = setInterval(checkReminders, 60000); 
         return () => clearInterval(intervalId);
     }, [remindersEnabled, reminderTime]);
-
-    const handleSaveReminder = async (time, enabled) => {
-        if (enabled && Notification.permission === 'denied') {
-            alert("Notifications are blocked. Please enable them in your browser or system settings to receive reminders.");
+    
+    const handleOpenReminders = async () => {
+        if (!('Notification' in window)) {
+            alert('This browser does not support desktop notifications.');
             return;
         }
 
-        if (enabled && Notification.permission === 'default') {
+        if (Notification.permission === 'denied') {
+            alert('Notifications are blocked. Please enable them in your browser or system settings to use this feature.');
+            return;
+        }
+
+        if (Notification.permission === 'default') {
             const permission = await Notification.requestPermission();
             if (permission !== 'granted') {
-                alert("Permission for notifications was not granted. Reminders will not be sent.");
-                localStorage.setItem('remindersEnabled', false);
-                setRemindersEnabled(false);
-                closeModal();
+                alert('Permission for notifications was not granted. You can try again later from the reminder settings.');
                 return;
             }
         }
         
+        setModalType('reminder');
+    };
+
+    const handleSaveReminder = (time, enabled) => {
         localStorage.setItem('remindersEnabled', enabled);
         localStorage.setItem('reminderTime', time);
         setRemindersEnabled(enabled);
@@ -400,7 +406,7 @@ const AppCore = ({ user }) => {
     const handleLogout = () => signOut(auth);
 
     const renderModalContent = () => {
-        if (!modalType || !modalData) return null;
+        if (!modalType) return null;
         if (modalType === 'reminder') {
             const ReminderModal = () => {
                 const [tempTime, setTempTime] = useState(reminderTime);
@@ -464,7 +470,7 @@ const AppCore = ({ user }) => {
     
     return (
         <div className="bg-slate-900 text-white min-h-screen font-sans">
-            <Header currentWeek={currentWeek} onLogout={handleLogout} onOpenReminders={() => setModalType('reminder')} />
+            <Header currentWeek={currentWeek} onLogout={handleLogout} onOpenReminders={handleOpenReminders} />
             <main className="w-full max-w-4xl mx-auto p-4">
                 {courseContent.map(weekData => ( <WeekCard key={weekData.week} weekData={weekData} currentWeek={currentWeek} onLearnMore={handleLearnMore} onOpenJournal={handleOpenJournal} onSetWeek={setCurrentWeek} onAdvanceWeek={handleAdvanceWeek} journalCount={(journalEntries[weekData.week] || []).length} /> ))}
             </main>
@@ -496,5 +502,6 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
 
 
