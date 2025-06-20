@@ -10,7 +10,7 @@ import {
     signInWithPopup,
     signOut
 } from 'firebase/auth';
-import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Bell, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award } from 'lucide-react';
+import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Bell, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award, CalendarPlus } from 'lucide-react';
 
 // --- Firebase Configuration ---
 // Your web app's Firebase configuration
@@ -260,6 +260,7 @@ const AppCore = ({ user }) => {
     const [editingEntry, setEditingEntry] = useState(null);
     const [journalInput, setJournalInput] = useState('');
     const [isListening, setIsListening] = useState(false);
+    const [remindersToSync, setRemindersToSync] = useState([]);
 
     const loadUserData = useCallback(async (uid) => {
         if (!uid) return; setLoading(true);
@@ -361,7 +362,8 @@ const AppCore = ({ user }) => {
         
         localStorage.setItem('reminders', JSON.stringify(newReminders));
         setReminders(newReminders);
-        closeModal();
+        setRemindersToSync(newReminders.filter(r => r.enabled));
+        setModalType('calendar');
     };
 
     // Speech, and other handlers
@@ -411,44 +413,10 @@ const AppCore = ({ user }) => {
     const renderModalContent = () => {
         if (!modalType) return null;
         if (modalType === 'reminder') {
-            const ReminderModal = () => {
-                const [tempReminders, setTempReminders] = useState(reminders);
-
-                const handleToggle = (index) => {
-                    const newReminders = [...tempReminders];
-                    newReminders[index].enabled = !newReminders[index].enabled;
-                    setTempReminders(newReminders);
-                };
-
-                const handleTimeChange = (index, time) => {
-                    const newReminders = [...tempReminders];
-                    newReminders[index].time = time;
-                    setTempReminders(newReminders);
-                };
-
-                return (
-                    <Modal onClose={closeModal} size="md">
-                        <h2 className="text-3xl font-bold text-sky-400 mb-4">Daily Reminders</h2>
-                        {tempReminders.map((reminder, index) => (
-                             <div key={index} className="space-y-4 bg-slate-900/50 p-4 rounded-lg mb-4">
-                                <div className="flex items-center justify-between">
-                                    <label htmlFor={`reminder-toggle-${index}`} className="font-semibold text-lg">{`Reminder ${index + 1}`}</label>
-                                    <div className="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" id={`reminder-toggle-${index}`} className="sr-only peer" checked={reminder.enabled} onChange={() => handleToggle(index)} />
-                                        <div className="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
-                                    </div>
-                                </div>
-                                 <div className={`flex items-center justify-between transition-opacity ${reminder.enabled ? 'opacity-100' : 'opacity-50'}`}>
-                                    <label htmlFor={`reminder-time-${index}`} className="font-semibold">Time</label>
-                                    <input type="time" id={`reminder-time-${index}`} disabled={!reminder.enabled} value={reminder.time} onChange={e => handleTimeChange(index, e.target.value)} className="bg-slate-700 border border-slate-600 rounded-md p-1"/>
-                                </div>
-                            </div>
-                        ))}
-                        <button onClick={() => handleSaveReminders(tempReminders)} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-lg mt-6">Save Settings</button>
-                    </Modal>
-                )
-            }
-            return <ReminderModal />;
+            return <ReminderModal currentReminders={reminders} onSave={handleSaveReminders} onClose={closeModal} />;
+        }
+        if (modalType === 'calendar') {
+            return <CalendarSyncModal reminders={remindersToSync} onClose={closeModal} />;
         }
         if (modalType === 'lesson') return <Modal onClose={closeModal} size="xl"><div className="max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar"><h2 className="text-3xl font-bold text-sky-400 mb-2">{!modalData.isIntro && `Week ${modalData.week}: `}{modalData.title}</h2><p className="italic text-slate-300 mb-4">"{modalData.concept}"</p><div className="border-t border-slate-700 my-4"></div><h3 className="text-xl font-bold text-teal-300 mb-2">The Drill: {modalData.drill}</h3><p className="text-slate-300 mb-4">{modalData.instructions}</p><h3 className="text-xl font-bold text-teal-300 mb-2">Deeper Dive: The 'Why' Behind It</h3><p className="text-slate-300">{modalData.deeperDive}</p></div><button onClick={closeModal} className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg mt-6">Close</button></Modal>;
         if (modalType === 'journal') {
@@ -498,6 +466,119 @@ const AppCore = ({ user }) => {
         </div>
     );
 }
+
+const ReminderModal = ({ currentReminders, onSave, onClose }) => {
+    const [tempReminders, setTempReminders] = useState(JSON.parse(JSON.stringify(currentReminders))); // Deep copy
+
+    const handleToggle = (index) => {
+        const newReminders = [...tempReminders];
+        newReminders[index].enabled = !newReminders[index].enabled;
+        setTempReminders(newReminders);
+    };
+
+    const handleTimeChange = (index, time) => {
+        const newReminders = [...tempReminders];
+        newReminders[index].time = time;
+        setTempReminders(newReminders);
+    };
+
+    return (
+        <Modal onClose={onClose} size="md">
+            <h2 className="text-3xl font-bold text-sky-400 mb-4">Daily Reminders</h2>
+            {tempReminders.map((reminder, index) => (
+                 <div key={index} className="space-y-4 bg-slate-900/50 p-4 rounded-lg mb-4">
+                    <div className="flex items-center justify-between">
+                        <label htmlFor={`reminder-toggle-${index}`} className="font-semibold text-lg">{`Reminder ${index + 1}`}</label>
+                        <div className="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id={`reminder-toggle-${index}`} className="sr-only peer" checked={reminder.enabled} onChange={() => handleToggle(index)} />
+                            <div className="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                        </div>
+                    </div>
+                     <div className={`flex items-center justify-between transition-opacity ${reminder.enabled ? 'opacity-100' : 'opacity-50'}`}>
+                        <label htmlFor={`reminder-time-${index}`} className="font-semibold">Time</label>
+                        <input type="time" id={`reminder-time-${index}`} disabled={!reminder.enabled} value={reminder.time} onChange={e => handleTimeChange(index, e.target.value)} className="bg-slate-700 border border-slate-600 rounded-md p-1"/>
+                    </div>
+                </div>
+            ))}
+            <button onClick={() => onSave(tempReminders)} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-lg mt-6">Save Settings</button>
+        </Modal>
+    );
+};
+
+const CalendarSyncModal = ({ reminders, onClose }) => {
+    
+    const generateICS = (reminder) => {
+        const [hour, minute] = reminder.time.split(':');
+        const now = new Date();
+        now.setHours(hour, minute, 0, 0);
+
+        const pad = (num) => num.toString().padStart(2, '0');
+        
+        const dtstart = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}T${pad(now.getHours())}${pad(now.getMinutes())}00`;
+
+        const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Athlete's Master Key//EN
+BEGIN:VEVENT
+UID:${crypto.randomUUID()}@athletesmasterkey.app
+DTSTAMP:${dtstart}Z
+DTSTART;TZID=America/New_York:${dtstart}
+RRULE:FREQ=DAILY
+SUMMARY:Athlete's Master Key: Mental Drill
+DESCRIPTION:Time for your daily mental training drill from the Athlete's Master Key app!
+END:VEVENT
+END:VCALENDAR`;
+        
+        const blob = new Blob([icsContent], { type: 'text/calendar' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `amk_reminder_${reminder.time}.ics`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+
+    const generateGoogleLink = (reminder) => {
+        const [hour, minute] = reminder.time.split(':');
+        const now = new Date();
+        now.setHours(hour, minute, 0, 0);
+        
+        const pad = (num) => num.toString().padStart(2, '0');
+        const dtstart = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}T${pad(now.getHours())}${pad(now.getMinutes())}00`;
+        
+        const title = encodeURIComponent("Athlete's Master Key: Mental Drill");
+        const details = encodeURIComponent("Time for your daily mental training drill from the Athlete's Master Key app!");
+        const rrule = "RRULE:FREQ=DAILY";
+        
+        const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=${dtstart}/${dtstart}&recur=${rrule}`;
+        window.open(url, '_blank');
+    };
+
+    return (
+        <Modal onClose={onClose} size="lg">
+            <h2 className="text-3xl font-bold text-sky-400 mb-2">Add to Calendar</h2>
+            <p className="text-slate-300 mb-6">Your reminder settings are saved. You can add these recurring events to your personal calendar for extra accountability.</p>
+            <div className="space-y-4">
+                {reminders.map((reminder, index) => (
+                    <div key={index} className="bg-slate-900/50 p-4 rounded-lg">
+                        <p className="text-lg font-bold mb-3">Reminder at {new Date(`1970-01-01T${reminder.time}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button onClick={() => generateGoogleLink(reminder)} className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center">
+                                Add to Google Calendar
+                            </button>
+                             <button onClick={() => generateICS(reminder)} className="bg-gray-200 hover:bg-gray-300 text-black font-semibold py-2 px-4 rounded-lg flex items-center justify-center">
+                                Add to Apple/Outlook (.ics)
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+             <button onClick={onClose} className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg mt-6">Done</button>
+        </Modal>
+    );
+};
+
 
 // --- Top-Level Component ---
 export default function App() {
