@@ -276,14 +276,22 @@ const AppCore = ({ user }) => {
         finally { setLoading(false); }
     }, []);
     
-    const saveUserData = useCallback(async () => {
+    const saveUserData = useCallback(async (dataToSave) => {
         if (!user) return;
-        try { await setDoc(doc(db, "artifacts", appId, "users", user.uid), { currentWeek, journalEntries }, { merge: true });
+        try { 
+            const docRef = doc(db, "artifacts", appId, "users", user.uid);
+            await setDoc(docRef, dataToSave, { merge: true });
         } catch (error) { console.error("Error saving user data:", error); }
-    }, [user, currentWeek, journalEntries]);
+    }, [user]);
 
     useEffect(() => { if (user) loadUserData(user.uid); }, [user, loadUserData]);
-    useEffect(() => { if (user) saveUserData(); }, [journalEntries, currentWeek, user, saveUserData]);
+    
+    // This effect now only handles advancing the week
+    useEffect(() => {
+        if (!loading && user) {
+            saveUserData({ currentWeek });
+        }
+    }, [currentWeek, loading, user, saveUserData]);
 
     // Speech, and other handlers
     const toggleListening = () => {
@@ -305,23 +313,38 @@ const AppCore = ({ user }) => {
   
     const handleLearnMore = (weekData) => { setModalData(weekData); setModalType('lesson'); };
     const handleOpenJournal = (weekData) => { setModalData(weekData); setModalType('journal'); setJournalView('list'); };
-    const handleSaveJournal = () => {
+
+    const handleSaveJournal = async () => {
       if (!modalData) return;
-      const weekEntries = journalEntries[modalData.week] || [];
-      if (editingEntry) {
-        const updatedEntries = weekEntries.map(e => e.id === editingEntry.id ? { ...e, text: journalInput } : e);
-        setJournalEntries({ ...journalEntries, [modalData.week]: updatedEntries });
-      } else {
+      
+      const updatedJournalEntries = JSON.parse(JSON.stringify(journalEntries));
+      const weekEntries = updatedJournalEntries[modalData.week] || [];
+
+      if (editingEntry) { // Update existing
+        const entryIndex = weekEntries.findIndex(e => e.id === editingEntry.id);
+        if (entryIndex > -1) {
+            weekEntries[entryIndex].text = journalInput;
+        }
+      } else { // Add new
         const newEntry = { id: crypto.randomUUID(), date: new Date().toISOString(), text: journalInput };
-        setJournalEntries({ ...journalEntries, [modalData.week]: [...weekEntries, newEntry] });
+        weekEntries.push(newEntry);
       }
+      updatedJournalEntries[modalData.week] = weekEntries;
+
+      setJournalEntries(updatedJournalEntries);
+      await saveUserData({ journalEntries: updatedJournalEntries });
+
       setJournalView('list'); setEditingEntry(null); setJournalInput('');
     };
-    const handleDeleteJournal = (entryId) => {
+
+    const handleDeleteJournal = async (entryId) => {
       if (!modalData) return;
-      const weekEntries = journalEntries[modalData.week] || [];
-      const updatedEntries = weekEntries.filter(e => e.id !== entryId);
-      setJournalEntries({ ...journalEntries, [modalData.week]: updatedEntries });
+      const updatedJournalEntries = JSON.parse(JSON.stringify(journalEntries));
+      const weekEntries = updatedJournalEntries[modalData.week] || [];
+      updatedJournalEntries[modalData.week] = weekEntries.filter(e => e.id !== entryId);
+      
+      setJournalEntries(updatedJournalEntries);
+      await saveUserData({ journalEntries: updatedJournalEntries });
     };
   
     const handleAdvanceWeek = () => { if (currentWeek < 9) setCurrentWeek(w => w + 1); };
@@ -519,4 +542,3 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
-
