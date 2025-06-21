@@ -126,14 +126,14 @@ const Header = ({ currentWeek, onLogout, onOpenCalendar }) => {
     )
 };
 
-const WeekCard = ({ weekData, currentWeek, onLearnMore, onOpenJournal, onSetWeek, onAdvanceWeek, journalCount }) => {
+const WeekCard = ({ weekData, currentWeek, onLearnMore, onOpenJournal, onSetWeek, onAdvanceWeek, uniqueJournalDays }) => {
     const { week, title, concept, icon: Icon, isConclusion, isIntro } = weekData;
     const isCompleted = week < currentWeek;
     const isCurrent = week === currentWeek;
     const isLocked = week > currentWeek;
     const [isExpanded, setIsExpanded] = useState(isCurrent || isIntro);
 
-    const canAdvance = journalCount >= 5;
+    const canAdvance = uniqueJournalDays >= 5;
 
     useEffect(() => { setIsExpanded(isCurrent); }, [isCurrent]);
 
@@ -170,9 +170,9 @@ const WeekCard = ({ weekData, currentWeek, onLearnMore, onOpenJournal, onSetWeek
                         <div className="bg-slate-900/50 rounded-lg p-4 border border-slate-700 text-slate-300"><p>{weekData.deeperDive}</p></div>
                     ) : !isConclusion ? (
                         <>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><button onClick={() => onLearnMore(weekData)} className="bg-sky-600 hover:bg-sky-500 p-4 rounded-lg text-left transition-transform transform hover:scale-105"><div className="flex items-center mb-1"><BookOpen className="mr-2" size={20}/><h3 className="text-lg font-bold">Read Lesson</h3></div><p className="text-sky-200 text-sm">Understand the 'why' behind the drill.</p></button><button onClick={() => onOpenJournal(weekData)} className="bg-teal-600 hover:bg-teal-500 p-4 rounded-lg text-left transition-transform transform hover:scale-105"><div className="flex items-center mb-1"><NotebookText className="mr-2" size={20}/><h3 className="text-lg font-bold">Open Journal</h3></div><p className="text-teal-200 text-sm">{journalCount} / 5 entries completed.</p></button></div>
-                            {isCurrent && week < 8 && (<div className="mt-6 text-center"><button onClick={onAdvanceWeek} disabled={!canAdvance} className="bg-teal-500 hover:bg-teal-400 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all transform disabled:scale-100 hover:scale-105"><span>{canAdvance ? "Complete Week & Unlock Next" : `Complete ${5-journalCount} more entries to unlock`}</span></button></div>)}
-                            {isCurrent && week === 8 && (<div className="mt-6 text-center"><button onClick={onAdvanceWeek} disabled={!canAdvance} className="bg-teal-500 hover:bg-teal-400 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all transform disabled:scale-100 hover:scale-105"><span>{canAdvance ? "Finish Course & View Conclusion" : `Complete ${5-journalCount} more entries`}</span></button></div>)}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><button onClick={() => onLearnMore(weekData)} className="bg-sky-600 hover:bg-sky-500 p-4 rounded-lg text-left transition-transform transform hover:scale-105"><div className="flex items-center mb-1"><BookOpen className="mr-2" size={20}/><h3 className="text-lg font-bold">Read Lesson</h3></div><p className="text-sky-200 text-sm">Understand the 'why' behind the drill.</p></button><button onClick={() => onOpenJournal(weekData)} className="bg-teal-600 hover:bg-teal-500 p-4 rounded-lg text-left transition-transform transform hover:scale-105"><div className="flex items-center mb-1"><NotebookText className="mr-2" size={20}/><h3 className="text-lg font-bold">Open Journal</h3></div><p className="text-teal-200 text-sm">{uniqueJournalDays} / 5 unique days recorded.</p></button></div>
+                            {isCurrent && week < 8 && (<div className="mt-6 text-center"><button onClick={onAdvanceWeek} disabled={!canAdvance} className="bg-teal-500 hover:bg-teal-400 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all transform disabled:scale-100 hover:scale-105"><span>{canAdvance ? "Complete Week & Unlock Next" : `Journal on ${5 - uniqueJournalDays} more day(s) to unlock`}</span></button></div>)}
+                            {isCurrent && week === 8 && (<div className="mt-6 text-center"><button onClick={onAdvanceWeek} disabled={!canAdvance} className="bg-teal-500 hover:bg-teal-400 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all transform disabled:scale-100 hover:scale-105"><span>{canAdvance ? "Finish Course & View Conclusion" : `Journal on ${5-uniqueJournalDays} more day(s)`}</span></button></div>)}
                         </>
                     ) : (
                          <div className="bg-slate-900/50 rounded-lg p-4 border border-slate-700 text-slate-300"><p>{weekData.deeperDive}</p></div>
@@ -328,6 +328,12 @@ const AppCore = ({ user }) => {
     const closeModal = () => { setModalType(null); setModalData(null); setIsListening(false); if (recognition) recognition.stop(); };
   
     const handleLogout = () => signOut(auth);
+    
+    const countUniqueJournalDays = (entries) => {
+        if (!entries || entries.length === 0) return 0;
+        const dates = entries.map(entry => new Date(entry.date).toDateString());
+        return new Set(dates).size;
+    };
 
     const renderModalContent = () => {
         if (!modalType) return null;
@@ -373,7 +379,7 @@ const AppCore = ({ user }) => {
         <div className="bg-slate-900 text-white min-h-screen font-sans">
             <Header currentWeek={currentWeek} onLogout={handleLogout} onOpenCalendar={() => setModalType('calendar')} />
             <main className="w-full max-w-4xl mx-auto p-4">
-                {courseContent.map(weekData => ( <WeekCard key={weekData.week} weekData={weekData} currentWeek={currentWeek} onLearnMore={handleLearnMore} onOpenJournal={handleOpenJournal} onSetWeek={setCurrentWeek} onAdvanceWeek={handleAdvanceWeek} journalCount={(journalEntries[weekData.week] || []).length} /> ))}
+                {courseContent.map(weekData => ( <WeekCard key={weekData.week} weekData={weekData} currentWeek={currentWeek} onLearnMore={handleLearnMore} onOpenJournal={handleOpenJournal} onSetWeek={setCurrentWeek} onAdvanceWeek={handleAdvanceWeek} uniqueJournalDays={countUniqueJournalDays(journalEntries[weekData.week])} /> ))}
             </main>
             <footer className="text-center p-4">
                 <p className="text-slate-500 text-xs">Your progress is saved automatically.</p>
@@ -403,11 +409,60 @@ const CalendarSyncModal = ({ onClose }) => {
     };
     
     const generateICS = (reminder) => {
-        // ... (ICS generation logic remains the same)
+        if (!reminder.enabled) return;
+        const [hour, minute] = reminder.time.split(':');
+        
+        const pad = (num) => num.toString().padStart(2, '0');
+        
+        let now = new Date();
+        now.setUTCHours(parseInt(hour), parseInt(minute), 0, 0);
+
+        const dtstart = `${now.getUTCFullYear()}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}00Z`;
+
+        const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Athlete's Master Key//EN
+BEGIN:VEVENT
+UID:${crypto.randomUUID()}@athletesmasterkey.app
+DTSTAMP:${dtstart}
+DTSTART;TZID=Etc/UTC:${dtstart}
+RRULE:FREQ=DAILY
+SUMMARY:Athlete's Master Key: Mental Drill
+DESCRIPTION:Time for your daily mental training drill from the Athlete's Master Key app!
+END:VEVENT
+END:VCALENDAR`;
+        
+        const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `amk_reminder_${reminder.time.replace(':', '')}.ics`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     };
 
     const generateGoogleLink = (reminder) => {
-        // ... (Google link generation logic remains the same)
+        if (!reminder.enabled) return;
+        const [hour, minute] = reminder.time.split(':');
+        const now = new Date();
+        
+        const pad = (num) => num.toString().padStart(2, '0');
+
+        let Tstart = `${pad(hour)}${pad(minute)}00`;
+        let Tend = `${pad(parseInt(hour))}${pad(parseInt(minute) + 5)}00`; // 5 min duration
+
+        const today = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`;
+
+        const dtstart = `${today}T${Tstart}`;
+        const dtend = `${today}T${Tend}`;
+        
+        const title = encodeURIComponent("Athlete's Master Key: Mental Drill");
+        const details = encodeURIComponent("Time for your daily mental training drill from the Athlete's Master Key app!");
+        const rrule = "RRULE:FREQ=DAILY";
+        
+        const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=${dtstart}/${dtend}&recur=${rrule}&ctz=America/New_York`;
+        window.open(url, '_blank');
     };
 
     return (
@@ -464,5 +519,4 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
-
 
