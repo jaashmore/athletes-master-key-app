@@ -542,3 +542,4 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
