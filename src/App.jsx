@@ -10,7 +10,7 @@ import {
     signInWithPopup,
     signOut
 } from 'firebase/auth';
-import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award, Bell } from 'lucide-react';
+import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award, CalendarPlus } from 'lucide-react';
 
 // --- Firebase Configuration ---
 // Your web app's Firebase configuration
@@ -71,7 +71,7 @@ const courseContent = [
       instructions: "For 5-7 minutes, focus all your mental energy on a small, detailed object (the laces on a football). Trace its lines with your eyes. When your mind inevitably wanders—which is part of the training—acknowledge the distraction without frustration, let it go, and firmly bring your attention back to the object. Try to extend this time throughout the week.",
       journalPrompts: [
         "What was the biggest distraction for you during the focus drill today (internal or external)?",
-        "Think of a time you were completely 'in the zone.' What did that feel like? How can this drill help you get there?",
+        "Think of a time you were completely 'in the zone.' What did that feel like? How can this drill help you get into that state more often?",
         "Describe a moment in your sport where narrow focus is critical (like a free throw). Now describe a moment where broad focus is critical (like reading the defense).",
         "How can you use this 'focus muscle' to better listen to your coach's instructions during a timeout?",
         "Besides your sport, where else in your life (school, home) could this improved focus be beneficial?",
@@ -171,7 +171,7 @@ const Modal = ({ children, onClose, size = 'lg' }) => (
     </div>
 );
 
-const Header = ({ currentWeek, onLogout, onOpenReminders }) => {
+const Header = ({ currentWeek, onLogout, onOpenCalendar }) => {
     const totalWeeks = courseContent.length - 2; // Exclude intro and conclusion for progress
     const progress = currentWeek > 1 ? ((currentWeek - 1) / totalWeeks) * 100 : 0;
     
@@ -180,7 +180,7 @@ const Header = ({ currentWeek, onLogout, onOpenReminders }) => {
             <div className="text-center mb-2 relative">
                 <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400">Athlete's Master Key</h1>
                 <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center space-x-2">
-                    <button onClick={onOpenReminders} className="p-2 text-slate-400 hover:text-white"><Bell size={20} /></button>
+                    <button onClick={onOpenCalendar} className="p-2 text-slate-400 hover:text-white"><CalendarPlus size={20} /></button>
                     <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white"><LogOut size={20} /></button>
                 </div>
             </div>
@@ -508,6 +508,7 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
 
 
 
