@@ -38,9 +38,9 @@ const courseContent = [
       concept: "Physical talent gets you to the game. Mental strength lets you win it.",
       deeperDive: "You spend countless hours training your body: lifting, running, and practicing drills until they're perfect. But every top athlete knows that when the pressure is on, the real competition happens in the six inches between your ears. This 8-week course is your mental gym. Here, you will train the skills that separate the good from the great: focus under pressure, unshakeable confidence, and the ability to visualize success before it happens. Let's begin." },
     { week: 1, title: "The Mind as the Starting Block", icon: Dribbble,
-      concept: "Every action is preceded by a thought. This week, we learn to become the calm observer of our thoughts, creating a space between an event and our reaction to it. This is the foundation of mental control.",
+      concept: "Every action is preceded by a thought. A hesitant thought creates a hesitant action. A confident thought creates a powerful action. This week, we learn to become the calm observer of our thoughts, creating a space between an event and our reaction to it. This is the foundation of mental control.",
       drill: "The 'Sit Still' Drill",
-      instructions: "For five minutes, sit upright and remain physically still. As thoughts arise, notice them like clouds passing in the sky, without judgment, and gently return your focus to your stillness. Make sure to resist all impulses; do not scratch that itch or adjust your posture to get more comfortable. Remain completely still during the entire drill. As the week progresses, try to increase your time to seven or even ten minutes.",
+      instructions: "For five minutes, sit upright and remain physically still. As thoughts arise, notice them like clouds passing in the sky, without judgment, and gently return your focus to your stillness. Make sure to resist all impulses; do not scratch that itch or adjust to get more comfortable. Remain completely still during the entire drill. As the week progresses, try to increase your time to seven or even ten minutes.",
       journalPrompts: [
           "Describe the 'chatter' in your mind. What kinds of thoughts kept popping up? How did it feel when you managed even a few seconds of inner quiet?",
           "When did you feel the most restless during the drill? What thought or feeling triggered it?",
@@ -507,4 +507,5 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
 
