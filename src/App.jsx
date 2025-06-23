@@ -38,7 +38,7 @@ const courseContent = [
       concept: "Physical talent gets you to the game. Mental strength lets you win it.",
       deeperDive: "You spend countless hours training your body: lifting, running, and practicing drills until they're perfect. But every top athlete knows that when the pressure is on, the real competition happens in the six inches between your ears. This 8-week course is your mental gym. Here, you will train the skills that separate the good from the great: focus under pressure, unshakeable confidence, and the ability to visualize success before it happens. Let's begin." },
     { week: 1, title: "The Mind as the Starting Block", icon: Dribbble,
-      concept: "Every action is preceded by a thought. A hesitant thought creates a hesitant action. A confident thought creates a powerful action. This week, we learn to become the calm observer of our thoughts, creating a space between an event and our reaction to it. This is the foundation of mental control.",
+      concept: "Every action is preceded by a thought. This week, we learn to become the calm observer of our thoughts, creating a space between an event and our reaction to it. This is the foundation of mental control.",
       drill: "The 'Sit Still' Drill",
       instructions: "For five minutes, sit upright and remain physically still. As thoughts arise, notice them like clouds passing in the sky, without judgment, and gently return your focus to your stillness. Make sure to resist all impulses; do not scratch that itch or adjust to get more comfortable. Remain completely still during the entire drill. As the week progresses, try to increase your time to seven or even ten minutes.",
       journalPrompts: [
@@ -92,7 +92,7 @@ const courseContent = [
         "Has this drill made the actual physical skill feel more automatic or natural?",
         "Reflect on the week. What's the biggest benefit you've found from seeing yourself succeed before you even start?"
       ],
-      deeperDive: "Watching yourself from a third-person perspective is a powerful coaching tool that allows you to analyze and perfect form and strategy *without* the emotional pressure of being 'in it.' It’s like being your own film analyst. You can see the mechanics of your jump shot or your swing from an objective viewpoint, allowing you to notice and correct flaws in your mental blueprint. This detached viewpoint is crucial for mastering the *technique* and *strategy* of a skill, as it burns the perfect sequence into your motor cortex." },
+      deeperDive: "Watching yourself from a third-person perspective is a powerful coaching tool that allows you to analyze and perfect form and strategy *without* the emotional pressure of being 'in it.' It’s like being your own film analyst. You can see the mechanics of your jump shot or your swing from an objective viewpoint, allowing you to notice and correct flaws in your mental blueprint. This detached perspective is crucial for mastering the *technique* and *strategy* of a skill, as it burns the perfect sequence into your motor cortex." },
     { week: 5, title: "HD Visualization: Making It Real", icon: Star,
       concept: "A blurry mental image has little power. A rich, multi-sensory visualization is what truly convinces your subconscious mind that the event is real. This is the difference between watching a movie and starring in it.",
       drill: "First-Person Immersion",
@@ -434,9 +434,6 @@ const AppCore = ({ user }) => {
     const renderModalContent = () => {
         if (!modalType) return null;
         
-        if (modalType === 'reminder') {
-             return <ReminderModal onClose={closeModal} />;
-        }
         if (modalType === 'lesson') return <Modal onClose={closeModal} size="xl"><div className="max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar"><h2 className="text-3xl font-bold text-sky-400 mb-2">{!modalData.isIntro && `Week ${modalData.week}: `}{modalData.title}</h2><p className="italic text-slate-300 mb-4">"{modalData.concept}"</p><div className="border-t border-slate-700 my-4"></div><h3 className="text-xl font-bold text-teal-300 mb-2">The Drill: {modalData.drill}</h3><p className="text-slate-300 mb-4">{modalData.instructions}</p><h3 className="text-xl font-bold text-teal-300 mb-2">Deeper Dive: The 'Why' Behind It</h3><p className="text-slate-300">{modalData.deeperDive}</p></div><button onClick={closeModal} className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg mt-6">Close</button></Modal>;
         if (modalType === 'journal') {
             const weekEntries = journalEntries[modalData.week] || [];
@@ -479,7 +476,7 @@ const AppCore = ({ user }) => {
     
     return (
         <div className="bg-slate-900 text-white min-h-screen font-sans">
-            <Header currentWeek={currentWeek} onLogout={handleLogout} onOpenReminders={() => setModalType('reminder')} />
+            <Header currentWeek={currentWeek} onLogout={handleLogout} />
             <main className="w-full max-w-4xl mx-auto p-4">
                 {courseContent.map(weekData => ( <WeekCard key={weekData.week} weekData={weekData} currentWeek={currentWeek} onLearnMore={handleLearnMore} onOpenJournal={handleOpenJournal} onSetWeek={setCurrentWeek} onAdvanceWeek={handleAdvanceWeek} uniqueJournalDays={countUniqueJournalDays(journalEntries[weekData.week])} /> ))}
             </main>
@@ -491,79 +488,6 @@ const AppCore = ({ user }) => {
         </div>
     );
 }
-
-const ReminderModal = ({ onClose }) => {
-    const [reminders, setReminders] = useState([
-        { enabled: false, time: '08:00' },
-        { enabled: false, time: '18:00' }
-    ]);
-
-    useEffect(() => {
-        const savedReminders = localStorage.getItem('reminders');
-        if (savedReminders) {
-            setReminders(JSON.parse(savedReminders));
-        }
-    }, []);
-
-    const handleSave = async () => {
-        const wantsToEnable = reminders.some(r => r.enabled);
-        if (wantsToEnable && Notification.permission === 'denied') {
-            alert("Notifications are blocked in your browser settings. Please enable them to receive reminders.");
-            return;
-        }
-        if (wantsToEnable && Notification.permission === 'default') {
-            const permission = await Notification.requestPermission();
-            if (permission !== 'granted') {
-                alert("Permission was not granted. Reminders will remain off.");
-                const disabledReminders = reminders.map(r => ({ ...r, enabled: false }));
-                localStorage.setItem('reminders', JSON.stringify(disabledReminders));
-                setReminders(disabledReminders);
-                return;
-            }
-        }
-        localStorage.setItem('reminders', JSON.stringify(reminders));
-        alert("Reminder settings saved!");
-        onClose();
-    };
-
-    const handleToggle = (index) => {
-        const newReminders = [...reminders];
-        newReminders[index].enabled = !newReminders[index].enabled;
-        setReminders(newReminders);
-    };
-
-    const handleTimeChange = (index, time) => {
-        const newReminders = [...reminders];
-        newReminders[index].time = time;
-        setReminders(newReminders);
-    };
-
-    return (
-        <Modal onClose={onClose} size="md">
-            <h2 className="text-3xl font-bold text-sky-400 mb-4">Daily Reminders</h2>
-            <p className="text-slate-300 mb-6 text-sm">Set up to two daily reminders. Note: For these web-based notifications to work, your browser must be running at the scheduled time.</p>
-            {reminders.map((reminder, index) => (
-                 <div key={index} className="space-y-4 bg-slate-900/50 p-4 rounded-lg mb-4">
-                    <div className="flex items-center justify-between">
-                        <label htmlFor={`reminder-toggle-${index}`} className="font-semibold text-lg">{`Reminder ${index + 1}`}</label>
-                        <div className="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id={`reminder-toggle-${index}`} className="sr-only peer" checked={reminder.enabled} onChange={() => handleToggle(index)} />
-                            <div className="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
-                        </div>
-                    </div>
-                     <div className={`transition-opacity ${reminder.enabled ? 'opacity-100' : 'opacity-50'}`}>
-                        <div className="flex items-center justify-between">
-                           <label htmlFor={`reminder-time-${index}`} className="font-semibold">Time</label>
-                           <input type="time" id={`reminder-time-${index}`} disabled={!reminder.enabled} value={reminder.time} onChange={e => handleTimeChange(index, e.target.value)} className="bg-slate-700 border border-slate-600 rounded-md p-1"/>
-                        </div>
-                    </div>
-                </div>
-            ))}
-             <button onClick={handleSave} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-lg mt-6">Save Settings</button>
-        </Modal>
-    );
-};
-
 
 // --- Top-Level Component ---
 export default function App() {
@@ -584,6 +508,7 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
 
 
 
