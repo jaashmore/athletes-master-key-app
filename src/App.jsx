@@ -10,7 +10,7 @@ import {
     signInWithPopup,
     signOut
 } from 'firebase/auth';
-import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award } from 'lucide-react';
+import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award, CalendarPlus } from 'lucide-react';
 
 // --- Firebase Configuration ---
 // Your web app's Firebase configuration
@@ -113,7 +113,7 @@ const courseContent = [
       instructions: "Write one specific, major goal on a card, phrased as if it's already true ('I am the starting point guard...'). Read it with feeling every morning and night. As you read, take a moment to imagine how it *feels* to have already achieved it.",
       journalPrompts: [
         "Write down your Present Tense Goal. Does it feel ambitious? Is it specific enough?",
-        "Did you feel any resistance or doubt when you first started saying it? Describe that feeling.",
+        "Did you feel any resistance or doubt when you first started saying your goal? Describe that feeling.",
         "What is one small action you can take *today* that is in alignment with your Present Tense Goal?",
         "How does repeating this goal change the way you approach your daily practice?",
         "Break down your main goal into a smaller, one-week goal. Write it in the present tense.",
@@ -171,7 +171,7 @@ const Modal = ({ children, onClose, size = 'lg' }) => (
     </div>
 );
 
-const Header = ({ currentWeek, onLogout }) => {
+const Header = ({ currentWeek, onLogout, onOpenCalendar }) => {
     const totalWeeks = courseContent.length - 2; // Exclude intro and conclusion for progress
     const progress = currentWeek > 1 ? ((currentWeek - 1) / totalWeeks) * 100 : 0;
     
@@ -180,6 +180,7 @@ const Header = ({ currentWeek, onLogout }) => {
             <div className="text-center mb-2 relative">
                 <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400">Athlete's Master Key</h1>
                 <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center space-x-2">
+                    <button onClick={onOpenCalendar} className="p-2 text-slate-400 hover:text-white"><CalendarPlus size={20} /></button>
                     <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white"><LogOut size={20} /></button>
                 </div>
             </div>
@@ -620,3 +621,4 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
