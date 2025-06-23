@@ -527,15 +527,15 @@ const ReminderModal = ({ onClose }) => {
     };
 
     const handleToggle = (index) => {
-        const newReminders = [...reminders];
-        newReminders[index].enabled = !newReminders[index].enabled;
-        setReminders(newReminders);
+        setReminders(currentReminders => 
+            currentReminders.map((r, i) => i === index ? { ...r, enabled: !r.enabled } : r)
+        );
     };
 
     const handleTimeChange = (index, time) => {
-        const newReminders = [...reminders];
-        newReminders[index].time = time;
-        setReminders(newReminders);
+        setReminders(currentReminders => 
+            currentReminders.map((r, i) => i === index ? { ...r, time: time } : r)
+        );
     };
 
     return (
@@ -584,6 +584,7 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
 
 
 
