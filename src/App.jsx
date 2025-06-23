@@ -378,7 +378,10 @@ const AppCore = ({ user }) => {
                     {weekEntries.length === 0 ? <p className="text-center text-slate-400">No entries yet.</p> : weekEntries.sort((a,b) => new Date(b.date) - new Date(a.date)).map(entry => (
                         <div key={entry.id} className="bg-slate-900/50 p-3 rounded-lg flex justify-between items-center">
                         <div><p className="font-semibold">{entry.text.substring(0, 50)}...</p><p className="text-xs text-slate-400">{new Date(entry.date).toLocaleDateString()}</p></div>
-                        <div className="flex space-x-2"><button onClick={() => { setEditingEntry(entry); setJournalInput(entry.text); setJournalView('editor'); }} className="p-2 hover:bg-slate-700 rounded-full"><Edit2 size={16}/></button><button onClick={() => handleDeleteJournal(entry.id)} className="p-2 hover:bg-slate-700 rounded-full text-red-400"><Trash2 size={16}/></button></div>
+                        <div className="flex space-x-2">
+                           <button onClick={() => { setEditingEntry(entry); setJournalInput(entry.text); setJournalView('editor'); }} className="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full"><Edit2 size={16}/></button>
+                           <button onClick={() => handleDeleteJournal(entry.id)} className="p-2 hover:bg-slate-700 rounded-full text-red-400"><Trash2 size={16}/></button>
+                        </div>
                         </div>
                     ))}
                     </div>
@@ -542,4 +545,5 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
 
