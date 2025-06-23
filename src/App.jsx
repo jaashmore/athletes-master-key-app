@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';import React, { useState, useEffect, useCallback } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, getDoc, setLogLevel } from 'firebase/firestore';
 import { 
@@ -40,7 +40,7 @@ const courseContent = [
     { week: 1, title: "The Mind as the Starting Block", icon: Dribbble,
       concept: "Every action is preceded by a thought. A hesitant thought creates a hesitant action. A confident thought creates a powerful action. This week, we learn to become the calm observer of our thoughts, creating a space between an event and our reaction to it. This is the foundation of mental control.",
       drill: "The 'Sit Still' Drill",
-      instructions: "For five minutes, sit upright and remain physically still. As thoughts arise, notice them like clouds passing in the sky, without judgment, and gently return your focus to your stillness.  Makes sure to resist all impulses; do not scratch that itch or adjust to get more comfortable. Remain completely still during the entire drill. As the week progresses, try to increase your time to seven or even ten minutes.",
+      instructions: "For five minutes, sit upright and remain physically still. As thoughts arise, notice them like clouds passing in the sky, without judgment, and gently return your focus to your stillness. Make sure to resist all impulses; do not scratch that itch or adjust to get more comfortable. Remain completely still during the entire drill. As the week progresses, try to increase your time to seven or even ten minutes.",
       journalPrompts: [
           "Describe the 'chatter' in your mind. What kinds of thoughts kept popping up? How did it feel when you managed even a few seconds of inner quiet?",
           "When did you feel the most restless during the drill? What thought or feeling triggered it?",
@@ -50,11 +50,11 @@ const courseContent = [
           "How has your ability to sit still and quiet your mind changed since Day 1?",
           "Reflect on the week. What was the biggest challenge in this drill, and what was the biggest reward?"
       ],
-      deeperDive: "This drill trains your prefrontal cortex, the part of the brain responsible for emotional regulation and executive function. By consciously resisting the urge to react to every thought or physical impulse, you are building the mental muscle to stay calm under pressure. Think of it as creating a 'mental pause button.' This button is what prevents you from being emotionally rattled by a bad call, a mistake, or an opponent's trash talk, allowing you to respond with logic instead of impulse." },
+      deeperDive: "This drill is a form of mindfulness meditation that trains your prefrontal cortex, the part of the brain responsible for emotional regulation and executive function. In sports, you are constantly bombarded with stimuli: a roaring crowd, a trash-talking opponent, a bad call from a ref. Your brain’s default is to react instantly. This exercise builds the crucial mental skill of non-reaction. By consciously resisting the urge to scratch an itch or follow a distracting thought, you are building the mental muscle to stay calm under pressure. You're creating a 'mental pause button' that gives you a split second to choose a logical, productive response over a purely emotional, and often detrimental, one." },
     { week: 2, title: "Control the Mental Locker Room", icon: BrainCircuit,
       concept: "Your brain forms habits through neural pathways. Negative self-talk is a reinforced habit, like a well-worn path in a field. This week, we strategically stop walking that path and start cutting a new one.",
       drill: "Thought Stopping & Replacement",
-      instructions: "When you catch a negative thought (e.g., 'I'm too tired'), mentally visualize a big red STOP sign. Then, immediately and forcefully, replace it with a pre-written, powerful statement (e.g., 'I have the endurance to finish strong'). Don't just say the words; try to feel them.",
+      instructions: "When you catch a negative thought (e.g., 'I'm too tired,' 'I can't make this shot'), mentally visualize a big red STOP sign. Then, immediately and forcefully, replace it with a pre-written, powerful statement (e.g., 'I have the endurance to finish strong,' 'I trust my training'). Don't just say the words; try to *feel* the confidence they imply.",
       journalPrompts: [
           "Identify one recurring negative thought you challenged this week. What was your replacement thought?",
           "Describe a specific moment where you used this technique. How did it affect your immediate feelings or actions?",
@@ -64,11 +64,11 @@ const courseContent = [
           "Did you find it difficult to believe your positive replacement statements at first? Is it getting easier?",
           "Reflect on the week. How has becoming aware of your self-talk changed your mood during training?"
       ],
-      deeperDive: "This is a core technique of Cognitive Behavioral Therapy (CBT), built on the principle of neuroplasticity. Your brain can and does change based on your thoughts and actions. Every time you successfully interrupt a negative thought and substitute a positive one, you weaken the old neural pathway and strengthen a new one. It's not magic; you are physically re-wiring your brain for confidence and resilience, making positive self-talk your new automatic response." },
+      deeperDive: "This is a core technique of Cognitive Behavioral Therapy (CBT), built on the powerful principle of neuroplasticity. Your brain can, and does, physically change based on your thoughts. A negative thought like 'I always mess up under pressure' is a well-worn neural pathway—your brain's default road. Every time you perform this drill, you are doing three things: 1) You recognize the destructive thought. 2) You interrupt the automatic firing of that neural pathway. 3) You begin to carve a new, more positive pathway. The first few times may feel forced, but with repetition, the positive thought becomes the new default." },
     { week: 3, title: "The Power of Unwavering Focus", icon: Target,
       concept: "Focus is a muscle. Most unforced errors come from a lapse in focus. This week, we train your ability to consciously direct your attention and hold it steady.",
       drill: "Object Lock-In",
-      instructions: "For 5-7 minutes, focus all your mental energy on a small, detailed object (the laces on a football). Trace its lines with your eyes. When your mind inevitably wanders—which is part of the training—acknowledge the distraction without frustration, let it go, and firmly bring your attention back to the object. Try to extend this time throughout the week.",
+      instructions: "For 5-7 minutes, focus all your mental energy on a small, detailed object (the laces on a football, a blade of grass). Trace its lines with your eyes. Notice tiny imperfections. When your mind inevitably wanders—which is part of the training—acknowledge the distraction without frustration, let it go, and firmly bring your attention back to the object. Try to extend this time throughout the week.",
       journalPrompts: [
         "What was the biggest distraction for you during the focus drill today (internal or external)?",
         "Think of a time you were completely 'in the zone.' What did that feel like? How can this drill help you get into that state more often?",
@@ -78,7 +78,7 @@ const courseContent = [
         "Did you notice it becoming easier to hold your focus as the week went on? Describe the feeling.",
         "Reflect on the week. What have you learned about your own attention span and your ability to control it?"
       ],
-      deeperDive: "This drill strengthens 'attentional control,' the ability to choose what you pay attention to. Top performers can filter out irrelevant stimuli (the crowd, the score, their own anxieties) and lock onto the most important cue in the moment. This exercise trains your brain's filtering mechanism, the thalamus, making it easier to achieve a state of 'flow' and perform with heightened awareness during competition." },
+      deeperDive: "This drill directly strengthens your 'attentional control.' Think of your focus as a spotlight. Elite performers can narrow that spotlight to a single point (a free-throw line, a golf ball) or widen it to see the whole field, all while keeping distracting 'stagehands' (the crowd, negative thoughts) out of the beam. This exercise trains your brain's filtering mechanism, the thalamus, making it easier to lock onto the cues that matter and ignore the ones that don't. This is the foundational skill for achieving the highly-sought-after state of 'flow' or being 'in the zone.'" },
     { week: 4, title: "Building Your Mental Blueprint", icon: BrainCircuit,
       concept: "Your brain doesn't know the difference between a vividly imagined successful action and a real one. When you visualize a perfect performance, you create a neural 'blueprint' for success.",
       drill: "The Perfect Play (3rd Person)",
@@ -92,7 +92,7 @@ const courseContent = [
         "Has this drill made the actual physical skill feel more automatic or natural?",
         "Reflect on the week. What's the biggest benefit you've found from seeing yourself succeed before you even start?"
       ],
-      deeperDive: "Watching yourself from a third-person perspective allows you to analyze and perfect form and strategy without the emotional pressure of being 'in it.' It's like being your own coach, breaking down the mechanics of success in a safe mental space. This detached viewpoint is crucial for mastering the *technique* and *strategy* of a skill, correcting errors in your mind before they happen on the field." },
+      deeperDive: "Watching yourself from a third-person perspective is a powerful coaching tool that allows you to analyze and perfect form and strategy *without* the emotional pressure of being 'in it.' It’s like being your own film analyst. You can see the mechanics of your jump shot or your swing from an objective viewpoint, allowing you to notice and correct flaws in your mental blueprint. This detached perspective is crucial for mastering the *technique* and *strategy* of a skill, as it burns the perfect sequence into your motor cortex." },
     { week: 5, title: "HD Visualization: Making It Real", icon: Star,
       concept: "A blurry mental image has little power. A rich, multi-sensory visualization is what truly convinces your subconscious mind that the event is real. This is the difference between watching a movie and starring in it.",
       drill: "First-Person Immersion",
@@ -120,7 +120,7 @@ const courseContent = [
         "As you repeat your goal, is the feeling of it being real getting stronger? Describe the change.",
         "Reflect on the week. Has focusing on a definite outcome made your efforts feel more purposeful?"
       ],
-      deeperDive: "This technique engages the Reticular Activating System (RAS) in your brain. The RAS acts as a filter for all the information your senses take in. By repeatedly focusing on a clear, specific goal, you are programming your RAS to constantly scan your environment for opportunities, people, and information relevant to achieving that goal. You literally start to notice things you were blind to before, creating a path to your objective." },
+      deeperDive: "This technique engages a part of your brain called the Reticular Activating System (RAS). The RAS acts as a filter for all the information your senses take in, deciding what to bring to your conscious attention. By repeatedly focusing on a clear, specific, and emotionally-charged goal, you are programming your RAS to constantly scan your environment for opportunities, people, and information relevant to achieving that goal. You literally start to notice things you were blind to before—a teammate's subtle cue, a piece of coaching advice, an opportunity to get in extra practice—all because you've told your brain what's important." },
     { week: 7, title: "Building Unshakable Belief", icon: Star,
       concept: "Belief isn't just a thought; it's a feeling of certainty. The fastest way to build belief in a future goal is to borrow the feeling from a past success. Your mind already knows what success feels like.",
       drill: "The Highlight Reel",
@@ -134,7 +134,7 @@ const courseContent = [
         "Has this drill helped quiet the voice of doubt? How?",
         "Reflect on the week. Do you feel a stronger sense of certainty about your goal now than you did seven days ago?"
       ],
-      deeperDive: "This uses a principle called 'state-dependent memory.' Your emotional state can trigger related memories, skills, and levels of confidence. By recalling the *feeling* of past success, you put your brain and body back into that high-performance state. When you attach that powerful emotional state to your new goal, you create a strong belief that the new goal is just as achievable because your mind has already 'felt' the success." },
+      deeperDive: "This uses a principle called 'state-dependent memory.' Your emotional state can trigger related memories, skills, and levels of confidence. By recalling the *feeling* of past success, you put your brain and body back into that high-performance state. When you attach that powerful, familiar emotional state to your new, un-achieved goal, you build a bridge in your mind. This creates a strong, almost physical belief that the new goal is just as achievable because your mind has already 'felt' the success." },
     { week: 8, title: "Game Day Integration", icon: Dribbble,
       concept: "This isn't a superstition; it's a strategic mental warm-up. It automates the process of shifting you from your everyday mindset into your 'performance state' on command.",
       drill: "The Performance Prime Routine",
@@ -507,17 +507,3 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
