@@ -64,7 +64,7 @@ const courseContent = [
           "Did you find it difficult to believe your positive replacement statements at first? Is it getting easier?",
           "Reflect on the week. How has becoming aware of your self-talk changed your mood during training?"
       ],
-      deeperDive: "This is a core technique of Cognitive Behavioral Therapy (CBT), built on the powerful principle of neuroplasticity. Your brain can, and does, physically change based on your thoughts. A negative thought like 'I always mess up under pressure' is a well-worn neural pathway—your brain's default road. Every time you perform this drill, you are doing three things: 1) You recognize the destructive thought. 2) You interrupt the automatic firing of that neural pathway. 3) You begin to carve a new, more positive pathway. The first few times may feel forced, but with repetition, the positive thought becomes the new default." },
+      deeperDive: "This is a core technique of Cognitive Behavioral Therapy (CBT), built on the powerful principle of neuroplasticity. Your brain can and does change based on your thoughts. A negative thought like 'I always mess up under pressure' is a well-worn neural pathway—your brain's default road. Every time you perform this drill, you are doing three things: 1) You recognize the destructive thought. 2) You interrupt the automatic firing of that neural pathway. 3) You begin to carve a new, more positive pathway. The first few times may feel forced, but with repetition, the positive thought becomes the new default." },
     { week: 3, title: "The Power of Unwavering Focus", icon: Target,
       concept: "Focus is a muscle. Most unforced errors come from a lapse in focus. This week, we train your ability to consciously direct your attention and hold it steady.",
       drill: "Object Lock-In",
@@ -434,6 +434,9 @@ const AppCore = ({ user }) => {
     const renderModalContent = () => {
         if (!modalType) return null;
         
+        if (modalType === 'reminder') {
+             return <ReminderModal onClose={closeModal} />;
+        }
         if (modalType === 'lesson') return <Modal onClose={closeModal} size="xl"><div className="max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar"><h2 className="text-3xl font-bold text-sky-400 mb-2">{!modalData.isIntro && `Week ${modalData.week}: `}{modalData.title}</h2><p className="italic text-slate-300 mb-4">"{modalData.concept}"</p><div className="border-t border-slate-700 my-4"></div><h3 className="text-xl font-bold text-teal-300 mb-2">The Drill: {modalData.drill}</h3><p className="text-slate-300 mb-4">{modalData.instructions}</p><h3 className="text-xl font-bold text-teal-300 mb-2">Deeper Dive: The 'Why' Behind It</h3><p className="text-slate-300">{modalData.deeperDive}</p></div><button onClick={closeModal} className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg mt-6">Close</button></Modal>;
         if (modalType === 'journal') {
             const weekEntries = journalEntries[modalData.week] || [];
@@ -508,6 +511,7 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
 
 
 
