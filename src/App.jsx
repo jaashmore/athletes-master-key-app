@@ -32,7 +32,7 @@ const appId = typeof __app_id !== 'undefined' ? __app_id : 'athlete-s-master-key
 // setLogLevel('debug'); // Use for debugging firestore
 
 
-// --- Enriched Course Content with Deeper Dive ---
+// --- Enriched Course Content with Daily Journal Prompts ---
 const courseContent = [
     { week: 0, title: "Welcome to Your Mental Gym", icon: BrainCircuit, isIntro: true,
       concept: "Physical talent gets you to the game. Mental strength lets you win it.",
@@ -41,49 +41,113 @@ const courseContent = [
       concept: "Every action is preceded by a thought. This week, we learn to become the calm observer of our thoughts, creating a space between an event and our reaction to it. This is the foundation of mental control.",
       drill: "The 'Sit Still' Drill",
       instructions: "For five minutes, sit upright and remain physically still. As thoughts arise, notice them like clouds passing in the sky, without judgment, and gently return your focus to your stillness. As the week progresses, try to increase your time to seven or even ten minutes.",
-      journalPrompt: "Describe the 'chatter' in your mind. What kinds of thoughts kept popping up? How did it feel when you managed even a few seconds of inner quiet?",
+      journalPrompts: [
+          "Describe the 'chatter' in your mind. What kinds of thoughts kept popping up? How did it feel when you managed even a few seconds of inner quiet?",
+          "When did you feel the most restless during the drill? What thought or feeling triggered it?",
+          "Did you notice any patterns in your thoughts (e.g., replaying past events, worrying about the future)? Describe one.",
+          "How did this mental stillness (or lack thereof) compare to how your mind feels during a practice or game?",
+          "What is one situation outside of sports where being a calm observer of your thoughts would be helpful?",
+          "How has your ability to sit still and quiet your mind changed since Day 1?",
+          "Reflect on the week. What was the biggest challenge in this drill, and what was the biggest reward?"
+      ],
       deeperDive: "This drill trains your prefrontal cortex, the part of the brain responsible for emotional regulation and executive function. By consciously resisting the urge to react to every thought or physical impulse, you are building the mental muscle to stay calm under pressure. Think of it as creating a 'mental pause button.' This button is what prevents you from being emotionally rattled by a bad call, a mistake, or an opponent's trash talk, allowing you to respond with logic instead of impulse." },
     { week: 2, title: "Control the Mental Locker Room", icon: BrainCircuit,
       concept: "Your brain forms habits through neural pathways. Negative self-talk is a reinforced habit, like a well-worn path in a field. This week, we strategically stop walking that path and start cutting a new one.",
       drill: "Thought Stopping & Replacement",
       instructions: "When you catch a negative thought (e.g., 'I'm too tired'), mentally visualize a big red STOP sign. Then, immediately and forcefully, replace it with a pre-written, powerful statement (e.g., 'I have the endurance to finish strong'). Don't just say the words; try to feel them.",
-      journalPrompt: "Identify one recurring negative thought you challenged this week. What was your replacement thought? Describe a specific moment where you used this technique.",
+      journalPrompts: [
+          "Identify one recurring negative thought you challenged this week. What was your replacement thought?",
+          "Describe a specific moment where you used this technique. How did it affect your immediate feelings or actions?",
+          "What situations or triggers tend to bring out your most negative self-talk?",
+          "Create a new empowering replacement statement for a different negative thought you've had.",
+          "How does your self-talk after a mistake differ from your self-talk after a success?",
+          "Did you find it difficult to believe your positive replacement statements at first? Is it getting easier?",
+          "Reflect on the week. How has becoming aware of your self-talk changed your mood during training?"
+      ],
       deeperDive: "This is a core technique of Cognitive Behavioral Therapy (CBT), built on the principle of neuroplasticity. Your brain can and does change based on your thoughts and actions. Every time you successfully interrupt a negative thought and substitute a positive one, you weaken the old neural pathway and strengthen a new one. It's not magic; you are physically re-wiring your brain for confidence and resilience, making positive self-talk your new automatic response." },
     { week: 3, title: "The Power of Unwavering Focus", icon: Target,
       concept: "Focus is a muscle. Most unforced errors come from a lapse in focus. This week, we train your ability to consciously direct your attention and hold it steady.",
       drill: "Object Lock-In",
       instructions: "For 5-7 minutes, focus all your mental energy on a small, detailed object (the laces on a football). Trace its lines with your eyes. When your mind inevitably wanders—which is part of the training—acknowledge the distraction without frustration, let it go, and firmly bring your attention back to the object. Try to extend this time throughout the week.",
-      journalPrompt: "Think of a time you were completely 'in the zone.' What did that feel like? How can this drill help you get into that state more often?",
+      journalPrompts: [
+        "What was the biggest distraction for you during the focus drill today (internal or external)?",
+        "Think of a time you were completely 'in the zone.' What did that feel like? How can this drill help you get there?",
+        "Describe a moment in your sport where narrow focus is critical (like a free throw). Now describe a moment where broad focus is critical (like reading the defense).",
+        "How can you use this 'focus muscle' to better listen to your coach's instructions during a timeout?",
+        "Besides your sport, where else in your life (school, home) could this improved focus be beneficial?",
+        "Did you notice it becoming easier to hold your focus as the week went on? Describe the feeling.",
+        "Reflect on the week. What have you learned about your own attention span and your ability to control it?"
+      ],
       deeperDive: "This drill strengthens 'attentional control,' the ability to choose what you pay attention to. Top performers can filter out irrelevant stimuli (the crowd, the score, their own anxieties) and lock onto the most important cue in the moment. This exercise trains your brain's filtering mechanism, the thalamus, making it easier to achieve a state of 'flow' and perform with heightened awareness during competition." },
     { week: 4, title: "Building Your Mental Blueprint", icon: BrainCircuit,
       concept: "Your brain doesn't know the difference between a vividly imagined successful action and a real one. When you visualize a perfect performance, you create a neural 'blueprint' for success.",
       drill: "The Perfect Play (3rd Person)",
       instructions: "From a third-person view (like on TV), see yourself execute one critical skill flawlessly. Notice your technique, your form, and your composure. Rewind and play this mental video on a loop for 5 minutes. Focus on the mechanics and the perfect outcome.",
-      journalPrompt: "Describe your 'Perfect Play' in detail. What did perfect execution look like from the outside?",
+      journalPrompts: [
+        "Describe your 'Perfect Play' in detail. What did perfect execution look like from the outside?",
+        "What is one small detail of your technique you noticed and corrected while visualizing today?",
+        "Visualize an opponent making a great play against you. Now, visualize your perfect, calm, and focused response.",
+        "How does visualizing success before practice change how you feel when you step onto the field/court?",
+        "Visualize your team successfully executing a complex play. What is your specific role in it?",
+        "Has this drill made the actual physical skill feel more automatic or natural?",
+        "Reflect on the week. What's the biggest benefit you've found from seeing yourself succeed before you even start?"
+      ],
       deeperDive: "Watching yourself from a third-person perspective allows you to analyze and perfect form and strategy without the emotional pressure of being 'in it.' It's like being your own coach, breaking down the mechanics of success in a safe mental space. This detached viewpoint is crucial for mastering the *technique* and *strategy* of a skill, correcting errors in your mind before they happen on the field." },
     { week: 5, title: "HD Visualization: Making It Real", icon: Star,
       concept: "A blurry mental image has little power. A rich, multi-sensory visualization is what truly convinces your subconscious mind that the event is real. This is the difference between watching a movie and starring in it.",
       drill: "First-Person Immersion",
       instructions: "Experience your 'Perfect Play' through your own eyes. Actively engage your senses: what do you FEEL (the grip on the bat), HEAR (the swish of the net), and SMELL (the grass)? Crucially, attach the powerful EMOTION of success to the visualization.",
-      journalPrompt: "Which sense was easiest for you to add? How did adding the *emotion* of success at the end change the intensity of the experience?",
+      journalPrompts: [
+        "Which sense was easiest for you to add today? Which was the most difficult?",
+        "Describe the specific emotion you attached to your successful visualization. Was it pride, relief, excitement?",
+        "Visualize a moment of adversity (e.g., being tired, the score is close). Now, use first-person visualization to see, hear, and feel yourself pushing through it successfully.",
+        "How did adding sensory details make the visualization feel more real compared to last week's drill?",
+        "Focus on just one sense for your next visualization (e.g., only the sounds of the game). What do you notice?",
+        "Has this drill improved your confidence in your ability to perform the skill under pressure?",
+        "Reflect on the week. Which part of this drill (senses or emotion) had the biggest impact on you?"
+      ],
       deeperDive: "When you visualize from a first-person view and add sensory detail, your brain sends faint electrical signals to the relevant muscles, priming them for action. This is called the 'Carpenter Effect' or 'ideomotor response'. Adding emotion to this process anchors the visualization in your limbic system, your brain's emotional center, making the mental rehearsal far more memorable and powerful under pressure." },
     { week: 6, title: "Defining Your Victory", icon: Target,
       concept: "A vague wish gives your brain no direction. A clear, present-tense goal gives it a powerful command. You are programming your brain's internal 'GPS' to find the destination.",
       drill: "The Present Tense Goal",
       instructions: "Write one specific, major goal on a card, phrased as if it's already true ('I am the starting point guard...'). Read it with feeling every morning and night. As you read, take a moment to imagine how it *feels* to have already achieved it.",
-      journalPrompt: "Did you feel any resistance or doubt when you first started saying your goal? How has that feeling changed as you've repeated it with conviction?",
+      journalPrompts: [
+        "Write down your Present Tense Goal. Does it feel ambitious? Is it specific enough?",
+        "Did you feel any resistance or doubt when you first started saying it? Describe that feeling.",
+        "What is one small action you can take *today* that is in alignment with your Present Tense Goal?",
+        "How does repeating this goal change the way you approach your daily practice?",
+        "Break down your main goal into a smaller, one-week goal. Write it in the present tense.",
+        "As you repeat your goal, is the feeling of it being real getting stronger? Describe the change.",
+        "Reflect on the week. Has focusing on a definite outcome made your efforts feel more purposeful?"
+      ],
       deeperDive: "This technique engages the Reticular Activating System (RAS) in your brain. The RAS acts as a filter for all the information your senses take in. By repeatedly focusing on a clear, specific goal, you are programming your RAS to constantly scan your environment for opportunities, people, and information relevant to achieving that goal. You literally start to notice things you were blind to before, creating a path to your objective." },
     { week: 7, title: "Building Unshakable Belief", icon: Star,
       concept: "Belief isn't just a thought; it's a feeling of certainty. The fastest way to build belief in a future goal is to borrow the feeling from a past success. Your mind already knows what success feels like.",
       drill: "The Highlight Reel",
       instructions: "Mentally replay 2-3 of your proudest moments. Don't just see them; re-live them. Focus on the feeling of confidence and achievement it gave you. Now, take that powerful feeling and overlay it onto the visualization of your 'Present Tense Goal.'",
-      journalPrompt: "Describe the past successes on your 'Highlight Reel.' What is the common feeling that links them all together? Can you give that feeling a name?",
+      journalPrompts: [
+        "Describe the past successes on your 'Highlight Reel.' What is the common feeling that links them all together?",
+        "When you attached the feeling of past success to your new goal, did it make the new goal feel more believable? Why?",
+        "What is one piece of 'evidence' from your life that proves you are capable of achieving your goal?",
+        "Think of a role model or athlete you admire. Visualize yourself having their level of confidence.",
+        "How can you 'act as if' you've already achieved your goal in your next practice?",
+        "Has this drill helped quiet the voice of doubt? How?",
+        "Reflect on the week. Do you feel a stronger sense of certainty about your goal now than you did seven days ago?"
+      ],
       deeperDive: "This uses a principle called 'state-dependent memory.' Your emotional state can trigger related memories, skills, and levels of confidence. By recalling the *feeling* of past success, you put your brain and body back into that high-performance state. When you attach that powerful emotional state to your new goal, you create a strong belief that the new goal is just as achievable because your mind has already 'felt' the success." },
     { week: 8, title: "Game Day Integration", icon: Dribbble,
       concept: "This isn't a superstition; it's a strategic mental warm-up. It automates the process of shifting you from your everyday mindset into your 'performance state' on command.",
       drill: "The Performance Prime Routine",
       instructions: "Create and practice your 3-5 minute routine: 1. Stillness (3 deep breaths). 2. Visualization (1 minute of your 'First-Person Immersion'). 3. Affirmation (recite your 'Present Tense Goal' with the feeling of certainty). Make this non-negotiable before every practice and game.",
-      journalPrompt: "Perform your routine before your next competition. Contrast how you felt mentally (focus, confidence, nerves) with how you typically feel. What was the biggest difference?",
+      journalPrompts: [
+        "Write down your 3-step Performance Prime Routine. Is it simple and easy to remember?",
+        "Perform your routine before your next practice. Describe how you felt mentally (focus, confidence, nerves) as you started.",
+        "When is the best time to do this routine? In the locker room? On the sideline? Find your spot.",
+        "How can you use a mini-version of this routine (e.g., just one deep breath and your affirmation) to reset after a mistake in a game?",
+        "Did you feel more in control of your mental state after doing the routine?",
+        "Adjust one part of your routine. For example, try a different affirmation or visualization. What felt better?",
+        "Reflect on the week. How will you ensure you make this routine a permanent part of your athletic life?"
+      ],
       deeperDive: "Routines reduce cognitive load and create an anchor for performance. When you have a set pre-game routine, you don't waste mental energy thinking about how to get ready. It becomes an automatic trigger that tells your brain and body, 'It's time to compete.' This makes focus and confidence reliable and accessible when you need them most, rather than leaving your mental state to chance on game day." },
     { week: 9, title: "The Journey Continues", icon: Award, isConclusion: true,
       concept: "You have successfully completed the 8-week foundation. But this is not the end; it's the beginning. Mental strength, like physical strength, requires consistent training. The tools you've learned are now part of your permanent toolkit.",
@@ -286,14 +350,12 @@ const AppCore = ({ user }) => {
 
     useEffect(() => { if (user) loadUserData(user.uid); }, [user, loadUserData]);
     
-    // This effect now only handles advancing the week
     useEffect(() => {
         if (!loading && user) {
             saveUserData({ currentWeek });
         }
     }, [currentWeek, loading, user, saveUserData]);
 
-    // Speech, and other handlers
     const toggleListening = () => {
       if (!recognition) return;
       if (isListening) { recognition.stop(); setIsListening(false); } 
@@ -312,7 +374,11 @@ const AppCore = ({ user }) => {
     useEffect(() => { if (recognition) recognition.onend = () => setIsListening(false); }, []);
   
     const handleLearnMore = (weekData) => { setModalData(weekData); setModalType('lesson'); };
-    const handleOpenJournal = (weekData) => { setModalData(weekData); setModalType('journal'); setJournalView('list'); };
+    const handleOpenJournal = (weekData) => { 
+        setModalData(weekData); 
+        setModalType('journal'); 
+        setJournalView('list'); 
+    };
 
     const handleSaveJournal = async () => {
       if (!modalData) return;
@@ -320,12 +386,12 @@ const AppCore = ({ user }) => {
       const updatedJournalEntries = JSON.parse(JSON.stringify(journalEntries));
       const weekEntries = updatedJournalEntries[modalData.week] || [];
 
-      if (editingEntry) { // Update existing
+      if (editingEntry) { 
         const entryIndex = weekEntries.findIndex(e => e.id === editingEntry.id);
         if (entryIndex > -1) {
             weekEntries[entryIndex].text = journalInput;
         }
-      } else { // Add new
+      } else {
         const newEntry = { id: crypto.randomUUID(), date: new Date().toISOString(), text: journalInput };
         weekEntries.push(newEntry);
       }
@@ -358,6 +424,13 @@ const AppCore = ({ user }) => {
         return new Set(dates).size;
     };
 
+    const getDailyJournalPrompt = (weekData) => {
+        if (!weekData || !weekData.journalPrompts) return "";
+        const uniqueDays = countUniqueJournalDays(journalEntries[weekData.week]);
+        const promptIndex = Math.min(uniqueDays, weekData.journalPrompts.length - 1);
+        return weekData.journalPrompts[promptIndex];
+    };
+
     const renderModalContent = () => {
         if (!modalType) return null;
         
@@ -367,12 +440,14 @@ const AppCore = ({ user }) => {
         if (modalType === 'lesson') return <Modal onClose={closeModal} size="xl"><div className="max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar"><h2 className="text-3xl font-bold text-sky-400 mb-2">{!modalData.isIntro && `Week ${modalData.week}: `}{modalData.title}</h2><p className="italic text-slate-300 mb-4">"{modalData.concept}"</p><div className="border-t border-slate-700 my-4"></div><h3 className="text-xl font-bold text-teal-300 mb-2">The Drill: {modalData.drill}</h3><p className="text-slate-300 mb-4">{modalData.instructions}</p><h3 className="text-xl font-bold text-teal-300 mb-2">Deeper Dive: The 'Why' Behind It</h3><p className="text-slate-300">{modalData.deeperDive}</p></div><button onClick={closeModal} className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg mt-6">Close</button></Modal>;
         if (modalType === 'journal') {
             const weekEntries = journalEntries[modalData.week] || [];
+            const dailyPrompt = getDailyJournalPrompt(modalData);
+
             return (
             <Modal onClose={closeModal} size="xl">
                 <h2 className="text-3xl font-bold text-teal-400 mb-2">Journal: Week {modalData.week}</h2>
                 {journalView === 'list' ? (
                 <div>
-                    <p className="text-slate-300 font-semibold mb-4">Prompt: <span className="font-normal italic">"{modalData.journalPrompt}"</span></p>
+                    <p className="text-slate-300 font-semibold mb-4">Today's Prompt: <span className="font-normal italic">"{dailyPrompt}"</span></p>
                     <button onClick={() => { setEditingEntry(null); setJournalInput(''); setJournalView('editor'); }} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center mb-4"><Plus className="mr-2" />Add New Entry</button>
                     <div className="max-h-64 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
                     {weekEntries.length === 0 ? <p className="text-center text-slate-400">No entries yet.</p> : weekEntries.sort((a,b) => new Date(b.date) - new Date(a.date)).map(entry => (
@@ -388,7 +463,8 @@ const AppCore = ({ user }) => {
                 </div>
                 ) : (
                 <div>
-                    <h3 className="text-xl font-bold mb-4">{editingEntry ? 'Edit Entry' : 'New Entry'}</h3>
+                    <h3 className="text-xl font-bold mb-2">{editingEntry ? 'Edit Entry' : 'New Entry'}</h3>
+                    <p className="text-slate-300 font-semibold mb-4">Prompt: <span className="font-normal italic">"{dailyPrompt}"</span></p>
                     <textarea className="w-full h-48 bg-slate-900/50 rounded-lg p-4 border border-slate-700 focus:ring-2 focus:ring-teal-500 focus:outline-none" value={journalInput} onChange={(e) => setJournalInput(e.target.value)} placeholder="Your reflections..." />
                     <div className="flex justify-between items-center mt-4"><button onClick={() => setJournalView('list')} className="bg-slate-600 hover:bg-slate-500 text-white font-bold py-2 px-4 rounded-lg">Back to List</button><div>{recognition && <button onClick={toggleListening} className={`p-3 rounded-full ${isListening ? 'bg-red-500 animate-pulse' : 'bg-sky-600'}`}>{isListening ? <MicOff /> : <Mic />}</button>}</div><button onClick={handleSaveJournal} className="bg-teal-600 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded-lg">Save</button></div>
                 </div>
@@ -545,5 +621,6 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
 
 
