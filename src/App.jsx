@@ -40,7 +40,7 @@ const courseContent = [
     { week: 1, title: "The Mind as the Starting Block", icon: Dribbble,
       concept: "Every action is preceded by a thought. This week, we learn to become the calm observer of our thoughts, creating a space between an event and our reaction to it. This is the foundation of mental control.",
       drill: "The 'Sit Still' Drill",
-      instructions: "For five minutes, sit upright and remain physically still. As thoughts arise, notice them like clouds passing in the sky, without judgment, and gently return your focus to your stillness. Make sure to resist all impulses; do not scratch that itch or adjust to get more comfortable. Remain completely still during the entire drill. As the week progresses, try to increase your time to seven or even ten minutes.",
+      instructions: "For five minutes, sit upright and remain physically still. As thoughts arise, notice them like clouds passing in the sky, without judgment, and gently return your focus to your stillness. As the week progresses, try to increase your time to seven or even ten minutes.",
       journalPrompts: [
           "Describe the 'chatter' in your mind. What kinds of thoughts kept popping up? How did it feel when you managed even a few seconds of inner quiet?",
           "When did you feel the most restless during the drill? What thought or feeling triggered it?",
@@ -50,7 +50,7 @@ const courseContent = [
           "How has your ability to sit still and quiet your mind changed since Day 1?",
           "Reflect on the week. What was the biggest challenge in this drill, and what was the biggest reward?"
       ],
-      deeperDive: "This drill is a form of mindfulness meditation that trains your prefrontal cortex, the part of the brain responsible for emotional regulation and executive function. In sports, you are constantly bombarded with stimuli: a roaring crowd, a trash-talking opponent, a bad call from a ref. Your brain’s default is to react instantly. This exercise builds the crucial mental skill of non-reaction. By consciously resisting the urge to scratch an itch or follow a distracting thought, you are building the mental muscle to stay calm under pressure. You're creating a 'mental pause button' that gives you a split second to choose a logical, productive response over a purely emotional, and often detrimental, one." },
+      deeperDive: "This drill trains your prefrontal cortex, the part of the brain responsible for emotional regulation and executive function. By consciously resisting the urge to react to every thought or physical impulse, you are building the mental muscle to stay calm under pressure. Think of it as creating a 'mental pause button.' This button is what prevents you from being emotionally rattled by a bad call, a mistake, or an opponent's trash talk, allowing you to respond with logic instead of impulse." },
     { week: 2, title: "Control the Mental Locker Room", icon: BrainCircuit,
       concept: "Your brain forms habits through neural pathways. Negative self-talk is a reinforced habit, like a well-worn path in a field. This week, we strategically stop walking that path and start cutting a new one.",
       drill: "Thought Stopping & Replacement",
@@ -64,7 +64,7 @@ const courseContent = [
           "Did you find it difficult to believe your positive replacement statements at first? Is it getting easier?",
           "Reflect on the week. How has becoming aware of your self-talk changed your mood during training?"
       ],
-      deeperDive: "This is a core technique of Cognitive Behavioral Therapy (CBT), built on the powerful principle of neuroplasticity. Your brain can, and does, physically change based on your thoughts. A negative thought like 'I always mess up under pressure' is a well-worn neural pathway—your brain's default road. Every time you perform this drill, you are doing three things: 1) You recognize the destructive thought. 2) You interrupt the automatic firing of that neural pathway. 3) You begin to carve a new, more positive pathway. The first few times may feel forced, but with repetition, the positive thought becomes the new default." },
+      deeperDive: "This is a core technique of Cognitive Behavioral Therapy (CBT), built on the principle of neuroplasticity. Your brain can and does change based on your thoughts. A negative thought like 'I always mess up under pressure' is a well-worn neural pathway—your brain's default road. Every time you perform this drill, you are doing three things: 1) You recognize the destructive thought. 2) You interrupt the automatic firing of that neural pathway. 3) You begin to carve a new, more positive pathway. The first few times may feel forced, but with repetition, the positive thought becomes the new default." },
     { week: 3, title: "The Power of Unwavering Focus", icon: Target,
       concept: "Focus is a muscle. Most unforced errors come from a lapse in focus. This week, we train your ability to consciously direct your attention and hold it steady.",
       drill: "Object Lock-In",
@@ -584,6 +584,7 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
 
 
 
