@@ -10,7 +10,7 @@ import {
     signInWithPopup,
     signOut
 } from 'firebase/auth';
-import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award, Sparkles } from 'lucide-react';
+import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award, Bell } from 'lucide-react';
 
 // --- Firebase Configuration ---
 // Your web app's Firebase configuration
@@ -32,7 +32,7 @@ const appId = typeof __app_id !== 'undefined' ? __app_id : 'athlete-s-master-key
 // setLogLevel('debug'); // Use for debugging firestore
 
 
-// --- Enriched Course Content with Daily Journal Prompts & Deeper Dives ---
+// --- Enriched Course Content with Daily Journal Prompts ---
 const courseContent = [
     { week: 0, title: "Welcome to Your Mental Gym", icon: BrainCircuit, isIntro: true,
       concept: "Physical talent gets you to the game. Mental strength lets you win it.",
@@ -40,7 +40,7 @@ const courseContent = [
     { week: 1, title: "The Mind as the Starting Block", icon: Dribbble,
       concept: "Every action is preceded by a thought. This week, we learn to become the calm observer of our thoughts, creating a space between an event and our reaction to it. This is the foundation of mental control.",
       drill: "The 'Sit Still' Drill",
-      instructions: "For five minutes, sit upright and remain physically still. As thoughts arise, notice them like clouds passing in the sky, without judgment, and gently return your focus to your stillness. Make sure to resist all impulses; do not scratch that itch or adjust to get more comfortable. Remain completely still during the entire drill. As the week progresses, try to increase your time to seven or even ten minutes.",
+      instructions: "For five minutes, sit upright and remain physically still. As thoughts arise, notice them like clouds passing in the sky, without judgment, and gently return your focus to your stillness. As the week progresses, try to increase your time to seven or even ten minutes.",
       journalPrompts: [
           "Describe the 'chatter' in your mind. What kinds of thoughts kept popping up? How did it feel when you managed even a few seconds of inner quiet?",
           "When did you feel the most restless during the drill? What thought or feeling triggered it?",
@@ -50,16 +50,7 @@ const courseContent = [
           "How has your ability to sit still and quiet your mind changed since Day 1?",
           "Reflect on the week. What was the biggest challenge in this drill, and what was the biggest reward?"
       ],
-      deeperDive: "This drill is a form of mindfulness meditation that trains your prefrontal cortex, the part of the brain responsible for emotional regulation and executive function. In sports, you are constantly bombarded with stimuli: a roaring crowd, a trash-talking opponent, a bad call from a ref. Your brain’s default is to react instantly. This exercise builds the crucial mental skill of non-reaction. By consciously resisting the urge to scratch an itch or follow a distracting thought, you are building the mental muscle to stay calm under pressure. You're creating a 'mental pause button' that gives you a split second to choose a logical, productive response over a purely emotional, and often detrimental, one.",
-      affirmations: [
-        "I am in control of my reactions.",
-        "I can be still and find power in the quiet.",
-        "My mind is calm and my body is strong.",
-        "I choose to respond, not to react.",
-        "I am the calm center in the storm of competition.",
-        "My focus is my choice.",
-        "I build my mental strength through discipline."
-      ]},
+      deeperDive: "This drill trains your prefrontal cortex, the part of the brain responsible for emotional regulation and executive function. By consciously resisting the urge to react to every thought or physical impulse, you are building the mental muscle to stay calm under pressure. Think of it as creating a 'mental pause button.' This button is what prevents you from being emotionally rattled by a bad call, a mistake, or an opponent's trash talk, allowing you to respond with logic instead of impulse." },
     { week: 2, title: "Control the Mental Locker Room", icon: BrainCircuit,
       concept: "Your brain forms habits through neural pathways. Negative self-talk is a reinforced habit, like a well-worn path in a field. This week, we strategically stop walking that path and start cutting a new one.",
       drill: "Thought Stopping & Replacement",
@@ -73,20 +64,11 @@ const courseContent = [
           "Did you find it difficult to believe your positive replacement statements at first? Is it getting easier?",
           "Reflect on the week. How has becoming aware of your self-talk changed your mood during training?"
       ],
-      deeperDive: "This is a core technique of Cognitive Behavioral Therapy (CBT), built on the powerful principle of neuroplasticity. Your brain can, and does, physically change based on your thoughts. A negative thought like 'I always mess up under pressure' is a well-worn neural pathway—your brain's default road. Every time you perform this drill, you are doing three things: 1) You recognize the destructive thought. 2) You interrupt the automatic firing of that neural pathway. 3) You begin to carve a new, more positive pathway. The first few times may feel forced, but with repetition, the positive thought becomes the new default.",
-      affirmations: [
-        "I speak to myself with the same respect I give a teammate.",
-        "My thoughts create my performance. I choose powerful thoughts.",
-        "I replace doubt with action.",
-        "I am my own biggest supporter.",
-        "I learn from mistakes and move on stronger.",
-        "My inner voice is my greatest coach.",
-        "Confidence is a skill I am building every day."
-      ]},
+      deeperDive: "This is a core technique of Cognitive Behavioral Therapy (CBT), built on the principle of neuroplasticity. Your brain can and does change based on your thoughts. A negative thought like 'I always mess up under pressure' is a well-worn neural pathway—your brain's default road. Every time you perform this drill, you are doing three things: 1) You recognize the destructive thought. 2) You interrupt the automatic firing of that neural pathway. 3) You begin to carve a new, more positive pathway. The first few times may feel forced, but with repetition, the positive thought becomes the new default." },
     { week: 3, title: "The Power of Unwavering Focus", icon: Target,
       concept: "Focus is a muscle. Most unforced errors come from a lapse in focus. This week, we train your ability to consciously direct your attention and hold it steady.",
       drill: "Object Lock-In",
-      instructions: "For 5-7 minutes, focus all your mental energy on a small, detailed object (the laces on a football, a blade of grass). Trace its lines with your eyes. When your mind inevitably wanders—which is part of the training—acknowledge the distraction without frustration, let it go, and firmly bring your attention back to the object. Try to extend this time throughout the week.",
+      instructions: "For 5-7 minutes, focus all your mental energy on a small, detailed object (the laces on a football, a blade of grass). Trace its lines with your eyes. Notice tiny imperfections. When your mind inevitably wanders—which is part of the training—acknowledge the distraction without frustration, let it go, and firmly bring your attention back to the object. Try to extend this time throughout the week.",
       journalPrompts: [
         "What was the biggest distraction for you during the focus drill today (internal or external)?",
         "Think of a time you were completely 'in the zone.' What did that feel like? How can this drill help you get into that state more often?",
@@ -96,16 +78,7 @@ const courseContent = [
         "Did you notice it becoming easier to hold your focus as the week went on? Describe the feeling.",
         "Reflect on the week. What have you learned about your own attention span and your ability to control it?"
       ],
-      deeperDive: "This drill directly strengthens your 'attentional control.' Think of your focus as a spotlight. Elite performers can narrow that spotlight to a single point (a free-throw line, a golf ball) or widen it to see the whole field, all while keeping distracting 'stagehands' (the crowd, negative thoughts) out of the beam. This exercise trains your brain's filtering mechanism, the thalamus, making it easier to lock onto the cues that matter and ignore the ones that don't. This is the foundational skill for achieving the highly-sought-after state of 'flow' or being 'in the zone.'",
-      affirmations: [
-        "I place my attention where I choose.",
-        "I am focused on the present moment.",
-        "I can tune out distractions and lock in on my goal.",
-        "My focus is a powerful tool.",
-        "I see the details that matter.",
-        "I am fully engaged in the task at hand.",
-        "Clarity and focus lead me to success."
-      ]},
+      deeperDive: "This drill directly strengthens your 'attentional control.' Think of your focus as a spotlight. Elite performers can narrow that spotlight to a single point (a free-throw line, a golf ball) or widen it to see the whole field, all while keeping distracting 'stagehands' (the crowd, negative thoughts) out of the beam. This exercise trains your brain's filtering mechanism, the thalamus, making it easier to lock onto the cues that matter and ignore the ones that don't. This is the foundational skill for achieving the highly-sought-after state of 'flow' or being 'in the zone.'" },
     { week: 4, title: "Building Your Mental Blueprint", icon: BrainCircuit,
       concept: "Your brain doesn't know the difference between a vividly imagined successful action and a real one. When you visualize a perfect performance, you create a neural 'blueprint' for success.",
       drill: "The Perfect Play (3rd Person)",
@@ -119,16 +92,7 @@ const courseContent = [
         "Has this drill made the actual physical skill feel more automatic or natural?",
         "Reflect on the week. What's the biggest benefit you've found from seeing yourself succeed before you even start?"
       ],
-      deeperDive: "Watching yourself from a third-person perspective is a powerful coaching tool that allows you to analyze and perfect form and strategy *without* the emotional pressure of being 'in it.' It’s like being your own film analyst. You can see the mechanics of your jump shot or your swing from an objective viewpoint, allowing you to notice and correct flaws in your mental blueprint. This detached perspective is crucial for mastering the *technique* and *strategy* of a skill, as it burns the perfect sequence into your motor cortex.",
-      affirmations: [
-        "I see my success clearly.",
-        "I am the architect of my performance.",
-        "My mind is creating the blueprint for victory.",
-        "I execute with precision and skill.",
-        "I see the perfect play, and I make it happen.",
-        "My mental rehearsals lead to real-world success.",
-        "I study my performance and improve every day."
-      ]},
+      deeperDive: "Watching yourself from a third-person perspective is a powerful coaching tool that allows you to analyze and perfect form and strategy *without* the emotional pressure of being 'in it.' It’s like being your own film analyst. You can see the mechanics of your jump shot or your swing from an objective viewpoint, allowing you to notice and correct flaws in your mental blueprint. This detached perspective is crucial for mastering the *technique* and *strategy* of a skill, as it burns the perfect sequence into your motor cortex." },
     { week: 5, title: "HD Visualization: Making It Real", icon: Star,
       concept: "A blurry mental image has little power. A rich, multi-sensory visualization is what truly convinces your subconscious mind that the event is real. This is the difference between watching a movie and starring in it.",
       drill: "First-Person Immersion",
@@ -142,16 +106,7 @@ const courseContent = [
         "Has this drill improved your confidence in your ability to perform the skill under pressure?",
         "Reflect on the week. Which part of this drill (senses or emotion) had the biggest impact on you?"
       ],
-      deeperDive: "When you visualize from a first-person view and add sensory detail, your brain sends faint electrical signals to the relevant muscles, priming them for action. This is called the 'Carpenter Effect' or 'ideomotor response'. Adding emotion to this process anchors the visualization in your limbic system, your brain's emotional center, making the mental rehearsal far more memorable and powerful under pressure.",
-      affirmations: [
-        "I feel the success in every fiber of my being.",
-        "My senses are sharp, and my mind is clear.",
-        "I create my reality through powerful, vivid thoughts.",
-        "I am completely immersed in my performance.",
-        "The feeling of victory is familiar to me.",
-        "My confidence grows with every mental rep.",
-        "I see, hear, and feel my success."
-      ]},
+      deeperDive: "When you visualize from a first-person view and add sensory detail, your brain sends faint electrical signals to the relevant muscles, priming them for action. This is called the 'Carpenter Effect' or 'ideomotor response'. Adding emotion to this process anchors the visualization in your limbic system, your brain's emotional center, making the mental rehearsal far more memorable and powerful under pressure." },
     { week: 6, title: "Defining Your Victory", icon: Target,
       concept: "A vague wish gives your brain no direction. A clear, present-tense goal gives it a powerful command. You are programming your brain's internal 'GPS' to find the destination.",
       drill: "The Present Tense Goal",
@@ -165,16 +120,7 @@ const courseContent = [
         "As you repeat your goal, is the feeling of it being real getting stronger? Describe the change.",
         "Reflect on the week. Has focusing on a definite outcome made your efforts feel more purposeful?"
       ],
-      deeperDive: "This technique engages a part of your brain called the Reticular Activating System (RAS). The RAS acts as a filter for all the information your senses take in, deciding what to bring to your conscious attention. By repeatedly focusing on a clear, specific, and emotionally-charged goal, you are programming your RAS to constantly scan your environment for opportunities, people, and information relevant to achieving that goal. You literally start to notice things you were blind to before—a teammate's subtle cue, a piece of coaching advice, an opportunity to get in extra practice—all because you've told your brain what's important.",
-      affirmations: [
-        "I am achieving my goals.",
-        "I move with purpose and clarity.",
-        "My focus on my goal brings it closer every day.",
-        "I am the athlete I intend to be.",
-        "Every action I take supports my ultimate victory.",
-        "My goals are clear and my path is certain.",
-        "I am worthy of the success I am creating."
-      ]},
+      deeperDive: "This technique engages a part of your brain called the Reticular Activating System (RAS). The RAS acts as a filter for all the information your senses take in, deciding what to bring to your conscious attention. By repeatedly focusing on a clear, specific, and emotionally-charged goal, you are programming your RAS to constantly scan your environment for opportunities, people, and information relevant to achieving that goal. You literally start to notice things you were blind to before—a teammate's subtle cue, a piece of coaching advice, an opportunity to get in extra practice—all because you've told your brain what's important." },
     { week: 7, title: "Building Unshakable Belief", icon: Star,
       concept: "Belief isn't just a thought; it's a feeling of certainty. The fastest way to build belief in a future goal is to borrow the feeling from a past success. Your mind already knows what success feels like.",
       drill: "The Highlight Reel",
@@ -188,16 +134,7 @@ const courseContent = [
         "Has this drill helped quiet the voice of doubt? How?",
         "Reflect on the week. Do you feel a stronger sense of certainty about your goal now than you did seven days ago?"
       ],
-      deeperDive: "This uses a principle called 'state-dependent memory.' Your emotional state can trigger related memories, skills, and levels of confidence. By recalling the *feeling* of past success, you put your brain and body back into that high-performance state. When you attach that powerful, familiar emotional state to your new, un-achieved goal, you build a bridge in your mind. This creates a strong, almost physical belief that the new goal is just as achievable because your mind has already 'felt' the success.",
-      affirmations: [
-        "I have a history of success, and I build on it.",
-        "My belief in myself is my greatest strength.",
-        "I trust my abilities completely.",
-        "I have proven to myself that I can succeed.",
-        "I perform with unshakable confidence.",
-        "Doubt has no place in my mind.",
-        "I am certain of my success."
-      ]},
+      deeperDive: "This uses a principle called 'state-dependent memory.' Your emotional state can trigger related memories, skills, and levels of confidence. By recalling the *feeling* of past success, you put your brain and body back into that high-performance state. When you attach that powerful, familiar emotional state to your new, un-achieved goal, you build a bridge in your mind. This creates a strong, almost physical belief that the new goal is just as achievable because your mind has already 'felt' the success." },
     { week: 8, title: "Game Day Integration", icon: Dribbble,
       concept: "This isn't a superstition; it's a strategic mental warm-up. It automates the process of shifting you from your everyday mindset into your 'performance state' on command.",
       drill: "The Performance Prime Routine",
@@ -211,16 +148,7 @@ const courseContent = [
         "Adjust one part of your routine. For example, try a different affirmation or visualization. What felt better?",
         "Reflect on the week. How will you ensure you make this routine a permanent part of your athletic life?"
       ],
-      deeperDive: "Routines reduce cognitive load and create an anchor for performance. When you have a set pre-game routine, you don't waste mental energy thinking about how to get ready. It becomes an automatic trigger that tells your brain and body, 'It's time to compete.' This makes focus and confidence reliable and accessible when you need them most, rather than leaving your mental state to chance on game day.",
-      affirmations: [
-        "I am prepared and ready to perform.",
-        "My routine centers me and focuses my mind.",
-        "I step onto the field with calm confidence.",
-        "I control what I can control.",
-        "I am ready for any challenge.",
-        "This is my moment.",
-        "I trust my training and my preparation."
-      ]},
+      deeperDive: "Routines reduce cognitive load and create an anchor for performance. When you have a set pre-game routine, you don't waste mental energy thinking about how to get ready. It becomes an automatic trigger that tells your brain and body, 'It's time to compete.' This makes focus and confidence reliable and accessible when you need them most, rather than leaving your mental state to chance on game day." },
     { week: 9, title: "The Journey Continues", icon: Award, isConclusion: true,
       concept: "You have successfully completed the 8-week foundation. But this is not the end; it's the beginning. Mental strength, like physical strength, requires consistent training. The tools you've learned are now part of your permanent toolkit.",
       deeperDive: "Just as you don't stop lifting weights after one season, you don't stop mental training after one course. Consistency is the key to making these skills second nature. Continue to use your Performance Prime Routine before every game. Revisit the visualization and focus drills whenever you face a new challenge. Your mind is your greatest athletic asset—keep it sharp. The journey to mental mastery is ongoing, and you now have the map." }
@@ -243,7 +171,7 @@ const Modal = ({ children, onClose, size = 'lg' }) => (
     </div>
 );
 
-const Header = ({ currentWeek, onLogout }) => {
+const Header = ({ currentWeek, onLogout, onOpenReminders }) => {
     const totalWeeks = courseContent.length - 2; // Exclude intro and conclusion for progress
     const progress = currentWeek > 1 ? ((currentWeek - 1) / totalWeeks) * 100 : 0;
     
@@ -252,6 +180,7 @@ const Header = ({ currentWeek, onLogout }) => {
             <div className="text-center mb-2 relative">
                 <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400">Athlete's Master Key</h1>
                 <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center space-x-2">
+                    <button onClick={onOpenReminders} className="p-2 text-slate-400 hover:text-white"><Bell size={20} /></button>
                     <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white"><LogOut size={20} /></button>
                 </div>
             </div>
@@ -524,6 +453,9 @@ const AppCore = ({ user }) => {
     const renderModalContent = () => {
         if (!modalType) return null;
         
+        if (modalType === 'reminder') {
+             return <ReminderModal onClose={closeModal} />;
+        }
         if (modalType === 'affirmation') {
             const affirmation = getDailyAffirmation(modalData);
             return (
@@ -580,7 +512,7 @@ const AppCore = ({ user }) => {
     
     return (
         <div className="bg-slate-900 text-white min-h-screen font-sans">
-            <Header currentWeek={currentWeek} onLogout={handleLogout} />
+            <Header currentWeek={currentWeek} onLogout={handleLogout} onOpenReminders={() => setModalType('reminder')} />
             <main className="w-full max-w-4xl mx-auto p-4">
                 {courseContent.map(weekData => ( <WeekCard key={weekData.week} weekData={weekData} currentWeek={currentWeek} onLearnMore={handleLearnMore} onOpenJournal={handleOpenJournal} onSetWeek={setCurrentWeek} onAdvanceWeek={handleAdvanceWeek} uniqueJournalDays={countUniqueJournalDays(journalEntries[weekData.week])} /> ))}
             </main>
@@ -592,6 +524,79 @@ const AppCore = ({ user }) => {
         </div>
     );
 }
+
+const ReminderModal = ({ onClose }) => {
+    const [reminders, setReminders] = useState([
+        { enabled: false, time: '08:00' },
+        { enabled: false, time: '18:00' }
+    ]);
+
+    useEffect(() => {
+        const savedReminders = localStorage.getItem('reminders');
+        if (savedReminders) {
+            setReminders(JSON.parse(savedReminders));
+        }
+    }, []);
+
+    const handleSave = async () => {
+        const wantsToEnable = reminders.some(r => r.enabled);
+        if (wantsToEnable && Notification.permission === 'denied') {
+            alert("Notifications are blocked in your browser settings. Please enable them to receive reminders.");
+            return;
+        }
+        if (wantsToEnable && Notification.permission === 'default') {
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                alert("Permission was not granted. Reminders will remain off.");
+                const disabledReminders = reminders.map(r => ({ ...r, enabled: false }));
+                localStorage.setItem('reminders', JSON.stringify(disabledReminders));
+                setReminders(disabledReminders);
+                return;
+            }
+        }
+        localStorage.setItem('reminders', JSON.stringify(reminders));
+        alert("Reminder settings saved!");
+        onClose();
+    };
+
+    const handleToggle = (index) => {
+        setReminders(currentReminders => 
+            currentReminders.map((r, i) => i === index ? { ...r, enabled: !r.enabled } : r)
+        );
+    };
+
+    const handleTimeChange = (index, time) => {
+        setReminders(currentReminders => 
+            currentReminders.map((r, i) => i === index ? { ...r, time: time } : r)
+        );
+    };
+
+    return (
+        <Modal onClose={onClose} size="md">
+            <h2 className="text-3xl font-bold text-sky-400 mb-4">Daily Reminders</h2>
+            <p className="text-slate-300 mb-6 text-sm">Set up to two daily reminders. Note: For these web-based notifications to work, your browser must be running at the scheduled time.</p>
+            {reminders.map((reminder, index) => (
+                 <div key={index} className="space-y-4 bg-slate-900/50 p-4 rounded-lg mb-4">
+                    <div className="flex items-center justify-between">
+                        <label htmlFor={`reminder-toggle-${index}`} className="font-semibold text-lg">{`Reminder ${index + 1}`}</label>
+                        <div className="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id={`reminder-toggle-${index}`} className="sr-only peer" checked={reminder.enabled} onChange={() => handleToggle(index)} />
+                            <div className="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                        </div>
+                    </div>
+                     <div className={`transition-opacity ${reminder.enabled ? 'opacity-100' : 'opacity-50'}`}>
+                        <div className="flex items-center justify-between">
+                           <label htmlFor={`reminder-time-${index}`} className="font-semibold">Time</label>
+                           <input type="time" id={`reminder-time-${index}`} disabled={!reminder.enabled} value={reminder.time} onChange={e => handleTimeChange(index, e.target.value)} className="bg-slate-700 border border-slate-600 rounded-md p-1"/>
+                        </div>
+                    </div>
+                </div>
+            ))}
+             <button onClick={handleSave} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-lg mt-6">Save Settings</button>
+        </Modal>
+    );
+};
+
 
 // --- Top-Level Component ---
 export default function App() {
@@ -612,12 +617,3 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
-
-
-
-
-
-
-
-
-
