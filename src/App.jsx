@@ -10,7 +10,7 @@ import {
     signInWithPopup,
     signOut
 } from 'firebase/auth';
-import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award, Bell } from 'lucide-react';
+import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award } from 'lucide-react';
 
 // --- Firebase Configuration ---
 // Your web app's Firebase configuration
@@ -50,7 +50,7 @@ const courseContent = [
           "How has your ability to sit still and quiet your mind changed since Day 1?",
           "Reflect on the week. What was the biggest challenge in this drill, and what was the biggest reward?"
       ],
-      deeperDive: "This drill trains your prefrontal cortex, the part of the brain responsible for emotional regulation and executive function. By consciously resisting the urge to react to every thought or physical impulse, you are building the mental muscle to stay calm under pressure. Think of it as creating a 'mental pause button.' This button is what prevents you from being emotionally rattled by a bad call, a mistake, or an opponent's trash talk, allowing you to respond with logic instead of impulse." },
+      deeperDive: "This drill is a form of mindfulness meditation that trains your prefrontal cortex, the part of the brain responsible for emotional regulation and executive function. By consciously resisting the urge to react to every thought or physical impulse, you are building the mental muscle to stay calm under pressure. Think of it as creating a 'mental pause button.' This button is what prevents you from being emotionally rattled by a bad call, a mistake, or an opponent's trash talk, allowing you to respond with logic instead of impulse." },
     { week: 2, title: "Control the Mental Locker Room", icon: BrainCircuit,
       concept: "Your brain forms habits through neural pathways. Negative self-talk is a reinforced habit, like a well-worn path in a field. This week, we strategically stop walking that path and start cutting a new one.",
       drill: "Thought Stopping & Replacement",
@@ -64,7 +64,7 @@ const courseContent = [
           "Did you find it difficult to believe your positive replacement statements at first? Is it getting easier?",
           "Reflect on the week. How has becoming aware of your self-talk changed your mood during training?"
       ],
-      deeperDive: "This is a core technique of Cognitive Behavioral Therapy (CBT), built on the principle of neuroplasticity. Your brain can and does change based on your thoughts. A negative thought like 'I always mess up under pressure' is a well-worn neural pathway—your brain's default road. Every time you perform this drill, you are doing three things: 1) You recognize the destructive thought. 2) You interrupt the automatic firing of that neural pathway. 3) You begin to carve a new, more positive pathway. The first few times may feel forced, but with repetition, the positive thought becomes the new default." },
+      deeperDive: "This is a core technique of Cognitive Behavioral Therapy (CBT), built on the powerful principle of neuroplasticity. Your brain can, and does, physically change based on your thoughts. A negative thought like 'I always mess up under pressure' is a well-worn neural pathway—your brain's default road. Every time you perform this drill, you are doing three things: 1) You recognize the destructive thought. 2) You interrupt the automatic firing of that neural pathway. 3) You begin to carve a new, more positive pathway. The first few times may feel forced, but with repetition, the positive thought becomes the new default." },
     { week: 3, title: "The Power of Unwavering Focus", icon: Target,
       concept: "Focus is a muscle. Most unforced errors come from a lapse in focus. This week, we train your ability to consciously direct your attention and hold it steady.",
       drill: "Object Lock-In",
@@ -171,16 +171,15 @@ const Modal = ({ children, onClose, size = 'lg' }) => (
     </div>
 );
 
-const Header = ({ currentWeek, onLogout, onOpenReminders }) => {
+const Header = ({ currentWeek, onLogout }) => {
     const totalWeeks = courseContent.length - 2; // Exclude intro and conclusion for progress
     const progress = currentWeek > 1 ? ((currentWeek - 1) / totalWeeks) * 100 : 0;
     
     return (
         <header className="w-full max-w-4xl mx-auto p-4 sticky top-0 z-10 bg-slate-900/80 backdrop-blur-lg">
             <div className="text-center mb-2 relative">
-                <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400">Athlete's Master Key</h1>
+                <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400">My Mental Gym</h1>
                 <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center space-x-2">
-                    <button onClick={onOpenReminders} className="p-2 text-slate-400 hover:text-white"><Bell size={20} /></button>
                     <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white"><LogOut size={20} /></button>
                 </div>
             </div>
@@ -281,8 +280,8 @@ const LoginScreen = () => {
         <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-4">
             <div className="w-full max-w-sm">
                 <div className="text-center mb-8">
-                    <Dribbble className="mx-auto text-teal-400 mb-2" size={48} />
-                    <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400">Athlete's Master Key</h1>
+                    <BrainCircuit className="mx-auto text-teal-400 mb-2" size={48} />
+                    <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400">My Mental Gym</h1>
                     <p className="text-slate-400">Unlock Your Mental Potential</p>
                 </div>
                 
@@ -355,19 +354,6 @@ const AppCore = ({ user }) => {
             saveUserData({ currentWeek });
         }
     }, [currentWeek, loading, user, saveUserData]);
-
-    useEffect(() => {
-        const lastAffirmationDate = localStorage.getItem('lastAffirmationDate');
-        const todayStr = new Date().toDateString();
-        if (lastAffirmationDate !== todayStr) {
-            const currentWeekData = courseContent.find(c => c.week === currentWeek);
-            if(currentWeekData && currentWeekData.affirmations) {
-                setModalData(currentWeekData);
-                setModalType('affirmation');
-                localStorage.setItem('lastAffirmationDate', todayStr);
-            }
-        }
-    }, [currentWeek]);
 
     const toggleListening = () => {
       if (!recognition) return;
@@ -444,32 +430,9 @@ const AppCore = ({ user }) => {
         return weekData.journalPrompts[promptIndex];
     };
 
-    const getDailyAffirmation = (weekData) => {
-        if (!weekData || !weekData.affirmations) return "";
-        const dayOfWeek = new Date().getDay(); // Sunday = 0, Monday = 1, etc.
-        return weekData.affirmations[dayOfWeek];
-    };
-
     const renderModalContent = () => {
         if (!modalType) return null;
         
-        if (modalType === 'reminder') {
-             return <ReminderModal onClose={closeModal} />;
-        }
-        if (modalType === 'affirmation') {
-            const affirmation = getDailyAffirmation(modalData);
-            return (
-                <Modal onClose={closeModal} size="md">
-                    <div className="text-center">
-                        <Sparkles className="mx-auto text-yellow-400 mb-4" size={48} />
-                        <h2 className="text-2xl font-bold text-sky-300 mb-2">Today's Affirmation</h2>
-                        <p className="text-3xl font-semibold italic my-6">"{affirmation}"</p>
-                        <button onClick={closeModal} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-lg">Start My Day</button>
-                    </div>
-                </Modal>
-            );
-        }
-
         if (modalType === 'lesson') return <Modal onClose={closeModal} size="xl"><div className="max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar"><h2 className="text-3xl font-bold text-sky-400 mb-2">{!modalData.isIntro && `Week ${modalData.week}: `}{modalData.title}</h2><p className="italic text-slate-300 mb-4">"{modalData.concept}"</p><div className="border-t border-slate-700 my-4"></div><h3 className="text-xl font-bold text-teal-300 mb-2">The Drill: {modalData.drill}</h3><p className="text-slate-300 mb-4">{modalData.instructions}</p><h3 className="text-xl font-bold text-teal-300 mb-2">Deeper Dive: The 'Why' Behind It</h3><p className="text-slate-300">{modalData.deeperDive}</p></div><button onClick={closeModal} className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg mt-6">Close</button></Modal>;
         if (modalType === 'journal') {
             const weekEntries = journalEntries[modalData.week] || [];
@@ -512,7 +475,7 @@ const AppCore = ({ user }) => {
     
     return (
         <div className="bg-slate-900 text-white min-h-screen font-sans">
-            <Header currentWeek={currentWeek} onLogout={handleLogout} onOpenReminders={() => setModalType('reminder')} />
+            <Header currentWeek={currentWeek} onLogout={handleLogout} />
             <main className="w-full max-w-4xl mx-auto p-4">
                 {courseContent.map(weekData => ( <WeekCard key={weekData.week} weekData={weekData} currentWeek={currentWeek} onLearnMore={handleLearnMore} onOpenJournal={handleOpenJournal} onSetWeek={setCurrentWeek} onAdvanceWeek={handleAdvanceWeek} uniqueJournalDays={countUniqueJournalDays(journalEntries[weekData.week])} /> ))}
             </main>
@@ -524,79 +487,6 @@ const AppCore = ({ user }) => {
         </div>
     );
 }
-
-const ReminderModal = ({ onClose }) => {
-    const [reminders, setReminders] = useState([
-        { enabled: false, time: '08:00' },
-        { enabled: false, time: '18:00' }
-    ]);
-
-    useEffect(() => {
-        const savedReminders = localStorage.getItem('reminders');
-        if (savedReminders) {
-            setReminders(JSON.parse(savedReminders));
-        }
-    }, []);
-
-    const handleSave = async () => {
-        const wantsToEnable = reminders.some(r => r.enabled);
-        if (wantsToEnable && Notification.permission === 'denied') {
-            alert("Notifications are blocked in your browser settings. Please enable them to receive reminders.");
-            return;
-        }
-        if (wantsToEnable && Notification.permission === 'default') {
-            const permission = await Notification.requestPermission();
-            if (permission !== 'granted') {
-                alert("Permission was not granted. Reminders will remain off.");
-                const disabledReminders = reminders.map(r => ({ ...r, enabled: false }));
-                localStorage.setItem('reminders', JSON.stringify(disabledReminders));
-                setReminders(disabledReminders);
-                return;
-            }
-        }
-        localStorage.setItem('reminders', JSON.stringify(reminders));
-        alert("Reminder settings saved!");
-        onClose();
-    };
-
-    const handleToggle = (index) => {
-        setReminders(currentReminders => 
-            currentReminders.map((r, i) => i === index ? { ...r, enabled: !r.enabled } : r)
-        );
-    };
-
-    const handleTimeChange = (index, time) => {
-        setReminders(currentReminders => 
-            currentReminders.map((r, i) => i === index ? { ...r, time: time } : r)
-        );
-    };
-
-    return (
-        <Modal onClose={onClose} size="md">
-            <h2 className="text-3xl font-bold text-sky-400 mb-4">Daily Reminders</h2>
-            <p className="text-slate-300 mb-6 text-sm">Set up to two daily reminders. Note: For these web-based notifications to work, your browser must be running at the scheduled time.</p>
-            {reminders.map((reminder, index) => (
-                 <div key={index} className="space-y-4 bg-slate-900/50 p-4 rounded-lg mb-4">
-                    <div className="flex items-center justify-between">
-                        <label htmlFor={`reminder-toggle-${index}`} className="font-semibold text-lg">{`Reminder ${index + 1}`}</label>
-                        <div className="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id={`reminder-toggle-${index}`} className="sr-only peer" checked={reminder.enabled} onChange={() => handleToggle(index)} />
-                            <div className="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
-                        </div>
-                    </div>
-                     <div className={`transition-opacity ${reminder.enabled ? 'opacity-100' : 'opacity-50'}`}>
-                        <div className="flex items-center justify-between">
-                           <label htmlFor={`reminder-time-${index}`} className="font-semibold">Time</label>
-                           <input type="time" id={`reminder-time-${index}`} disabled={!reminder.enabled} value={reminder.time} onChange={e => handleTimeChange(index, e.target.value)} className="bg-slate-700 border border-slate-600 rounded-md p-1"/>
-                        </div>
-                    </div>
-                </div>
-            ))}
-             <button onClick={handleSave} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-lg mt-6">Save Settings</button>
-        </Modal>
-    );
-};
-
 
 // --- Top-Level Component ---
 export default function App() {
