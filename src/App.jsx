@@ -32,7 +32,7 @@ const appId = typeof __app_id !== 'undefined' ? __app_id : 'athlete-s-master-key
 // setLogLevel('debug'); // Use for debugging firestore
 
 
-// --- Enriched Course Content with Daily Lessons & Weekly Intros ---
+// --- Enriched Course Content with Daily Lessons ---
 const courseContent = [
     { week: 0, title: "Welcome to Your Mental Gym", icon: BrainCircuit, isIntro: true,
       concept: "Physical talent gets you to the game. Mental strength lets you win it.",
@@ -117,7 +117,7 @@ const Modal = ({ children, onClose, size = 'lg' }) => (
     </div>
 );
 
-const Header = ({ currentWeek, onLogout }) => {
+const Header = ({ currentWeek, onLogout, onOpenMasterJournal }) => {
     const totalWeeks = courseContent.filter(c => !c.isIntro && !c.isConclusion).length;
     const progress = currentWeek > 1 ? ((currentWeek - 1) / totalWeeks) * 100 : 0;
     
@@ -126,7 +126,8 @@ const Header = ({ currentWeek, onLogout }) => {
             <div className="text-center mb-2 relative">
                 <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400">My Mental Gym</h1>
                 <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center space-x-2">
-                    <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white"><LogOut size={20} /></button>
+                    <button onClick={onOpenMasterJournal} className="p-2 text-slate-400 hover:text-white" title="View All Journal Entries"><NotebookText size={20} /></button>
+                    <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white" title="Logout"><LogOut size={20} /></button>
                 </div>
             </div>
             <div className="w-full bg-slate-700 rounded-full h-2.5"><div className="bg-gradient-to-r from-teal-400 to-sky-500 h-2.5 rounded-full transition-all duration-500" style={{ width: `${progress}%` }}></div></div>
@@ -492,6 +493,7 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
 
 
 
