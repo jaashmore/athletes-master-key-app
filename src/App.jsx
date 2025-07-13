@@ -32,7 +32,7 @@ const appId = typeof __app_id !== 'undefined' ? __app_id : 'athlete-s-master-key
 // setLogLevel('debug'); // Use for debugging firestore
 
 
-// --- Enriched Course Content with Daily Lessons ---
+// --- Enriched Course Content with Daily Lessons & Weekly Intros ---
 const courseContent = [
     { week: 0, title: "Welcome to Your Mental Gym", icon: BrainCircuit, isIntro: true,
       concept: "Physical talent gets you to the game. Mental strength lets you win it.",
@@ -42,8 +42,9 @@ const courseContent = [
       title: "The Mind as the Starting Block", 
       icon: Dribbble,
       concept: "Every action is preceded by a thought. This week, we learn to become the calm observer of our thoughts, creating a space between an event and our reaction to it. This is the foundation of mental control.",
+      weeklyIntro: "Welcome to Week 1. Before we can learn to direct our thoughts, we must first learn to simply observe them without judgment. Many athletes are controlled by their thoughts—a flash of doubt before a big play, a surge of anger after a mistake. They believe they *are* their thoughts. The goal this week is to break that illusion.\n\nThis week's drills are designed to build the foundational skill of awareness. By practicing stillness and non-reaction, you will start to create a small space between a thought and your response to it. This space is where all mental power resides. It's the difference between an impulsive, emotional reaction and a calm, calculated action. This is the most fundamental skill in all of mental training.",
       dailyLessons: [
-        { day: 1, title: "The Stillness Drill", instructions: "For 5 minutes, sit upright and remain physically still. Your only job is to notice thoughts without reacting. When your mind wanders, gently guide it back to stillness.", deeperDive: "This drill trains your prefrontal cortex to resist impulsive reactions, a key skill for staying calm under pressure. By consciously resisting the urge to react to every thought or physical impulse, you are building the mental muscle to stay calm under pressure. You're creating a 'mental pause button' that prevents you from being rattled by a bad call, a mistake, or an opponent's trash talk, allowing you to respond with logic instead of impulse." },
+        { day: 1, title: "The Stillness Drill", instructions: "For 5 minutes, sit upright and remain physically still. Your only job is to notice thoughts without reacting. When your mind wanders, gently guide it back to stillness.", deeperDive: "This drill trains your prefrontal cortex to resist impulsive reactions, a key skill for staying calm under pressure. By consciously resisting the urge to react to every thought or physical impulse, you are building the mental muscle to stay calm under pressure. You're creating a 'mental pause button' that prevents you from being emotionally rattled by a bad call, a mistake, or an opponent's trash talk, allowing you to respond with logic instead of impulse." },
         { day: 2, title: "Noticing the Chatter", instructions: "Repeat the 5-minute stillness drill. Today, pay special attention to the *types* of thoughts that appear. Are they about the past? The future? Your to-do list? Just notice, don't judge.", deeperDive: "By identifying your mental habits, you begin to see that they are just thoughts, not commands. This separation is the first step to taking control. You learn that just because a thought appears doesn't mean it's true or that you have to act on it. This is the foundation of breaking free from negative thought loops that can sabotage performance." },
         { day: 3, title: "Resisting Physical Impulses", instructions: "Repeat the 5-minute stillness drill. Today, your focus is on physical sensations. Notice the urge to scratch an itch, shift your weight, or fidget. Acknowledge the urge, but consciously choose not to act on it.", deeperDive: "Mental discipline and physical discipline are linked. Resisting small physical impulses strengthens your overall willpower, making it easier to push through fatigue or discomfort in a game. This drill proves to your brain that you are in charge, not your fleeting physical sensations. It builds the mental fortitude to stay composed when your body is screaming at you to stop." },
         { day: 4, title: "Extending the Time", instructions: "Today, we increase the challenge. Perform the stillness drill for 7 minutes. The goal is to maintain your composure and non-reaction as the duration increases.", deeperDive: "Just like lifting heavier weights, extending the time builds mental endurance. It trains your mind to stay focused and calm for longer periods, which is crucial for late-game situations. This extended duration challenges your ability to stay present and not get carried away by boredom or restlessness, which are common mental opponents in long competitions." },
@@ -66,6 +67,7 @@ const courseContent = [
       title: "Control the Mental Locker Room", 
       icon: BrainCircuit, 
       concept: "Your brain forms habits through neural pathways. Negative self-talk is a reinforced habit. This week, we strategically stop walking that path and start cutting a new one.",
+      weeklyIntro: "Last week, you learned to observe your thoughts. This week, you become the gatekeeper of your mind. Your inner voice can be your greatest coach or your harshest critic. For many athletes, the inner critic runs the show, replaying mistakes and fueling doubt. This week is about firing that critic and hiring a coach.\n\nWe will use a powerful technique to actively intervene in your thought patterns. This isn't about pretending negative thoughts don't exist; it's about acknowledging them and consciously choosing a more powerful, productive response. You are learning to control the narrative in your head, which directly influences your confidence and actions on the field.",
       dailyLessons: [
         { day: 1, title: "Identifying the Negative Voice", instructions: "Throughout the day, act as a detective for your own thoughts. When you make a mistake or feel frustrated, what is the first thing you say to yourself? Write down at least one negative self-talk phrase you notice.", deeperDive: "Awareness is the first step to change. You cannot fix a habit you don't know you have. Today is about gathering intelligence on your inner critic so you can understand its tactics and triggers." },
         { day: 2, title: "The 'STOP' Command", instructions: "Today, when you catch a negative thought, mentally (or even out loud, if you're alone) shout 'STOP!'. Visualize a big red stop sign. The goal is simply to interrupt the pattern.", deeperDive: "This interruption breaks the automatic loop of a negative thought. It's a conscious intervention that prevents the thought from spiraling and affecting your emotional state. You are asserting control and showing your brain that this thought pattern is no longer acceptable." },
@@ -115,7 +117,7 @@ const Modal = ({ children, onClose, size = 'lg' }) => (
     </div>
 );
 
-const Header = ({ currentWeek, onLogout, onOpenMasterJournal }) => {
+const Header = ({ currentWeek, onLogout }) => {
     const totalWeeks = courseContent.filter(c => !c.isIntro && !c.isConclusion).length;
     const progress = currentWeek > 1 ? ((currentWeek - 1) / totalWeeks) * 100 : 0;
     
@@ -124,8 +126,7 @@ const Header = ({ currentWeek, onLogout, onOpenMasterJournal }) => {
             <div className="text-center mb-2 relative">
                 <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400">My Mental Gym</h1>
                 <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center space-x-2">
-                    <button onClick={onOpenMasterJournal} className="p-2 text-slate-400 hover:text-white" title="View All Journal Entries"><NotebookText size={20} /></button>
-                    <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white" title="Logout"><LogOut size={20} /></button>
+                    <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white"><LogOut size={20} /></button>
                 </div>
             </div>
             <div className="w-full bg-slate-700 rounded-full h-2.5"><div className="bg-gradient-to-r from-teal-400 to-sky-500 h-2.5 rounded-full transition-all duration-500" style={{ width: `${progress}%` }}></div></div>
@@ -185,9 +186,14 @@ const WeekCard = ({ weekData, currentWeek, onLearnMore, onSetWeek, onAdvanceWeek
                         <div className="bg-slate-900/50 rounded-lg p-4 border border-slate-700 text-slate-300"><p>{weekData.deeperDive}</p></div>
                     ) : !isConclusion ? (
                         <>
+                           <div className="bg-slate-900/50 rounded-lg p-4 mb-6 border border-slate-700">
+                                <h3 className="text-lg font-bold text-sky-300 mb-3">Weekly Introduction</h3>
+                                <p className="text-slate-300 whitespace-pre-line">{weekData.weeklyIntro}</p>
+                           </div>
+                           <h3 className="text-lg font-bold mb-2 text-center">Daily Lessons</h3>
                            <div className="space-y-2 mb-6">
-                                {dailyLessons && dailyLessons.map((lesson, index) => (
-                                    <button key={index} onClick={() => onLearnMore(lesson, weekData)} className="w-full text-left p-3 bg-slate-900/50 hover:bg-slate-700/50 rounded-lg flex items-center justify-between transition-colors">
+                                {dailyLessons && dailyLessons.map((lesson) => (
+                                    <button key={lesson.day} onClick={() => onLearnMore(lesson, weekData)} className="w-full text-left p-3 bg-slate-900/50 hover:bg-slate-700/50 rounded-lg flex items-center justify-between transition-colors">
                                         <span>Day {lesson.day}: {lesson.title}</span>
                                         <BookOpen size={16} className="text-sky-400"/>
                                     </button>
@@ -355,8 +361,9 @@ const AppCore = ({ user }) => {
             id: crypto.randomUUID(), 
             date: new Date().toISOString(), 
             text: journalInput,
-            prompt: getDailyJournalPrompt(modalData.week),
-            day: modalData.day
+            prompt: modalData.week.journalPrompts[modalData.day - 1],
+            day: modalData.day,
+            week: modalData.week.week
         };
         weekEntries.push(newEntry);
       }
@@ -368,11 +375,11 @@ const AppCore = ({ user }) => {
       setJournalView('list'); setEditingEntry(null); setJournalInput('');
     };
 
-    const handleDeleteJournal = async (entryId) => {
-      if (!modalData) return;
+    const handleDeleteJournal = async (entryId, weekNum) => {
+      if (!weekNum) return;
       const updatedJournalEntries = JSON.parse(JSON.stringify(journalEntries));
-      const weekEntries = updatedJournalEntries[modalData.week.week] || [];
-      updatedJournalEntries[modalData.week.week] = weekEntries.filter(e => e.id !== entryId);
+      const weekEntries = updatedJournalEntries[weekNum] || [];
+      updatedJournalEntries[weekNum] = weekEntries.filter(e => e.id !== entryId);
       
       setJournalEntries(updatedJournalEntries);
       await saveUserData({ journalEntries: updatedJournalEntries });
@@ -387,13 +394,6 @@ const AppCore = ({ user }) => {
         if (!entries || entries.length === 0) return 0;
         const dates = entries.map(entry => new Date(entry.date).toDateString());
         return new Set(dates).size;
-    };
-
-    const getDailyJournalPrompt = (weekData) => {
-        if (!weekData || !weekData.journalPrompts) return "";
-        const uniqueDays = countUniqueJournalDays(journalEntries[weekData.week]);
-        const promptIndex = Math.min(uniqueDays, weekData.journalPrompts.length - 1);
-        return weekData.journalPrompts[promptIndex];
     };
 
     const renderModalContent = () => {
@@ -436,7 +436,7 @@ const AppCore = ({ user }) => {
                         <div><p className="font-semibold">{entry.text.substring(0, 50)}...</p><p className="text-xs text-slate-400">{new Date(entry.date).toLocaleDateString()}</p></div>
                         <div className="flex space-x-2">
                            <button onClick={() => { setEditingEntry(entry); setJournalInput(entry.text); setJournalView('editor'); }} className="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full"><Edit2 size={16}/></button>
-                           <button onClick={() => handleDeleteJournal(entry.id)} className="p-2 hover:bg-slate-700 rounded-full text-red-400"><Trash2 size={16}/></button>
+                           <button onClick={() => handleDeleteJournal(entry.id, modalData.week.week)} className="p-2 hover:bg-slate-700 rounded-full text-red-400"><Trash2 size={16}/></button>
                         </div>
                         </div>
                     ))}
