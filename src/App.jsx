@@ -10,7 +10,7 @@ import {
     signInWithPopup,
     signOut
 } from 'firebase/auth';
-import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award } from 'lucide-react';
+import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award, Bell } from 'lucide-react';
 
 // --- Firebase Configuration ---
 // Your web app's Firebase configuration
@@ -115,7 +115,7 @@ const Modal = ({ children, onClose, size = 'lg' }) => (
     </div>
 );
 
-const Header = ({ currentWeek, onLogout }) => {
+const Header = ({ currentWeek, onLogout, onOpenReminders, onOpenMasterJournal }) => {
     const totalWeeks = courseContent.filter(c => !c.isIntro && !c.isConclusion).length;
     const progress = currentWeek > 1 ? ((currentWeek - 1) / totalWeeks) * 100 : 0;
     
@@ -124,7 +124,9 @@ const Header = ({ currentWeek, onLogout }) => {
             <div className="text-center mb-2 relative">
                 <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400">My Mental Gym</h1>
                 <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center space-x-2">
-                    <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white"><LogOut size={20} /></button>
+                    <button onClick={onOpenMasterJournal} className="p-2 text-slate-400 hover:text-white" title="View All Journal Entries"><NotebookText size={20} /></button>
+                    <button onClick={onOpenReminders} className="p-2 text-slate-400 hover:text-white" title="Set Reminders"><Bell size={20} /></button>
+                    <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white" title="Logout"><LogOut size={20} /></button>
                 </div>
             </div>
             <div className="w-full bg-slate-700 rounded-full h-2.5"><div className="bg-gradient-to-r from-teal-400 to-sky-500 h-2.5 rounded-full transition-all duration-500" style={{ width: `${progress}%` }}></div></div>
@@ -133,7 +135,7 @@ const Header = ({ currentWeek, onLogout }) => {
     )
 };
 
-const WeekCard = ({ weekData, currentWeek, onLearnMore, onOpenJournal, onSetWeek, onAdvanceWeek, uniqueJournalDays }) => {
+const WeekCard = ({ weekData, currentWeek, onLearnMore, onSetWeek, onAdvanceWeek, uniqueJournalDays, journalEntries }) => {
     const { week, title, concept, icon: Icon, isConclusion, isIntro, dailyLessons } = weekData;
     const isCompleted = week < currentWeek;
     const isCurrent = week === currentWeek;
@@ -163,6 +165,15 @@ const WeekCard = ({ weekData, currentWeek, onLearnMore, onOpenJournal, onSetWeek
     else if (isCompleted || isIntro) cardClasses += 'bg-slate-800/30 border-sky-500';
     else { cardClasses += 'bg-slate-800/10 border-slate-700'; }
 
+    const hasJournaledToday = (weekNum, dayNum) => {
+        const todayStr = new Date().toDateString();
+        const weekEntries = journalEntries[weekNum] || [];
+        return weekEntries.some(entry => {
+            const entryDateStr = new Date(entry.date).toDateString();
+            return entryDateStr === todayStr && entry.day === dayNum;
+        });
+    };
+
     return (
         <div className={`rounded-xl overflow-hidden mb-4 ${cardClasses}`}>
             <div className={`p-4 flex justify-between items-center ${headerClasses}`} onClick={handleHeaderClick}>
@@ -178,9 +189,12 @@ const WeekCard = ({ weekData, currentWeek, onLearnMore, onOpenJournal, onSetWeek
                     ) : !isConclusion ? (
                         <>
                            <div className="space-y-2 mb-6">
-                                {dailyLessons && dailyLessons.map((lesson, index) => (
-                                    <button key={index} onClick={() => onLearnMore(lesson, weekData)} className="w-full text-left p-3 bg-slate-900/50 hover:bg-slate-700/50 rounded-lg flex items-center justify-between transition-colors">
-                                        <span>Day {lesson.day}: {lesson.title}</span>
+                                {dailyLessons && dailyLessons.map((lesson) => (
+                                    <button key={lesson.day} onClick={() => onLearnMore(lesson, weekData)} className="w-full text-left p-3 bg-slate-900/50 hover:bg-slate-700/50 rounded-lg flex items-center justify-between transition-colors">
+                                        <div className="flex items-center">
+                                            {hasJournaledToday(week, lesson.day) && <CheckCircle size={16} className="text-teal-400 mr-2 flex-shrink-0" />}
+                                            <span>Day {lesson.day}: {lesson.title}</span>
+                                        </div>
                                         <BookOpen size={16} className="text-sky-400"/>
                                     </button>
                                 ))}
@@ -343,7 +357,12 @@ const AppCore = ({ user }) => {
             weekEntries[entryIndex].text = journalInput;
         }
       } else {
-        const newEntry = { id: crypto.randomUUID(), date: new Date().toISOString(), text: journalInput };
+        const newEntry = { 
+            id: crypto.randomUUID(), 
+            date: new Date().toISOString(), 
+            text: journalInput,
+            prompt: getDailyJournalPrompt(modalData)
+        };
         weekEntries.push(newEntry);
       }
       updatedJournalEntries[modalData.week] = weekEntries;
@@ -385,6 +404,27 @@ const AppCore = ({ user }) => {
     const renderModalContent = () => {
         if (!modalType) return null;
         
+        if (modalType === 'reminder') {
+             return <ReminderModal onClose={closeModal} />;
+        }
+        if (modalType === 'masterJournal') {
+            const allEntries = Object.values(journalEntries).flat().sort((a,b) => new Date(b.date) - new Date(a.date));
+            return (
+                <Modal onClose={closeModal} size="xl">
+                    <h2 className="text-3xl font-bold text-sky-400 mb-4">Master Journal</h2>
+                    <div className="max-h-[70vh] overflow-y-auto pr-2 space-y-4 custom-scrollbar">
+                        {allEntries.length === 0 ? <p className="text-center text-slate-400">No entries yet. Start journaling to see your progress!</p> :
+                        allEntries.map(entry => (
+                            <div key={entry.id} className="bg-slate-900/50 p-4 rounded-lg">
+                                <p className="text-sm text-slate-400 mb-1">{new Date(entry.date).toLocaleString()}</p>
+                                <p className="font-semibold italic text-teal-300 mb-2">Prompt: "{entry.prompt}"</p>
+                                <p className="text-slate-200 whitespace-pre-wrap">{entry.text}</p>
+                            </div>
+                        ))}
+                    </div>
+                </Modal>
+            );
+        }
         if (modalType === 'lesson') return <Modal onClose={closeModal} size="xl"><div className="max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar"><h2 className="text-3xl font-bold text-sky-400 mb-2">{modalData.lesson.title}</h2><div className="border-t border-slate-700 my-4"></div><h3 className="text-xl font-bold text-teal-300 mb-2">The Drill</h3><p className="text-slate-300 mb-4">{modalData.lesson.instructions}</p><h3 className="text-xl font-bold text-teal-300 mb-2">Deeper Dive: The 'Why' Behind It</h3><p className="text-slate-300">{modalData.lesson.deeperDive}</p><div className="mt-6"><button onClick={() => {closeModal(); setTimeout(() => handleOpenJournal(modalData.week), 200)}} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center text-lg">Journal About This Lesson</button></div></div></Modal>;
         if (modalType === 'journal') {
             const weekEntries = journalEntries[modalData.week] || [];
@@ -427,9 +467,9 @@ const AppCore = ({ user }) => {
     
     return (
         <div className="bg-slate-900 text-white min-h-screen font-sans">
-            <Header currentWeek={currentWeek} onLogout={handleLogout} />
+            <Header currentWeek={currentWeek} onLogout={handleLogout} onOpenReminders={() => setModalType('reminder')} onOpenMasterJournal={() => setModalType('masterJournal')} />
             <main className="w-full max-w-4xl mx-auto p-4">
-                {courseContent.map(weekData => ( <WeekCard key={weekData.week} weekData={weekData} currentWeek={currentWeek} onLearnMore={handleLearnMore} onOpenJournal={handleOpenJournal} onSetWeek={setCurrentWeek} onAdvanceWeek={handleAdvanceWeek} uniqueJournalDays={countUniqueJournalDays(journalEntries[weekData.week])} /> ))}
+                {courseContent.map(weekData => ( <WeekCard key={weekData.week} weekData={weekData} currentWeek={currentWeek} onLearnMore={handleLearnMore} onOpenJournal={handleOpenJournal} onSetWeek={setCurrentWeek} onAdvanceWeek={handleAdvanceWeek} uniqueJournalDays={countUniqueJournalDays(journalEntries[weekData.week])} journalEntries={journalEntries} /> ))}
             </main>
             <footer className="text-center p-4">
                 <p className="text-slate-500 text-xs">Your progress is saved automatically.</p>
@@ -439,6 +479,79 @@ const AppCore = ({ user }) => {
         </div>
     );
 }
+
+const ReminderModal = ({ onClose }) => {
+    const [reminders, setReminders] = useState([
+        { enabled: false, time: '08:00' },
+        { enabled: false, time: '18:00' }
+    ]);
+
+    useEffect(() => {
+        const savedReminders = localStorage.getItem('reminders');
+        if (savedReminders) {
+            setReminders(JSON.parse(savedReminders));
+        }
+    }, []);
+
+    const handleSave = async () => {
+        const wantsToEnable = reminders.some(r => r.enabled);
+        if (wantsToEnable && Notification.permission === 'denied') {
+            alert("Notifications are blocked in your browser settings. Please enable them to receive reminders.");
+            return;
+        }
+        if (wantsToEnable && Notification.permission === 'default') {
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                alert("Permission was not granted. Reminders will remain off.");
+                const disabledReminders = reminders.map(r => ({ ...r, enabled: false }));
+                localStorage.setItem('reminders', JSON.stringify(disabledReminders));
+                setReminders(disabledReminders);
+                return;
+            }
+        }
+        localStorage.setItem('reminders', JSON.stringify(reminders));
+        alert("Reminder settings saved!");
+        onClose();
+    };
+
+    const handleToggle = (index) => {
+        setReminders(currentReminders => 
+            currentReminders.map((r, i) => i === index ? { ...r, enabled: !r.enabled } : r)
+        );
+    };
+
+    const handleTimeChange = (index, time) => {
+        setReminders(currentReminders => 
+            currentReminders.map((r, i) => i === index ? { ...r, time: time } : r)
+        );
+    };
+
+    return (
+        <Modal onClose={onClose} size="md">
+            <h2 className="text-3xl font-bold text-sky-400 mb-4">Daily Reminders</h2>
+            <p className="text-slate-300 mb-6 text-sm">Set up to two daily reminders. Note: For these web-based notifications to work, your browser must be running at the scheduled time.</p>
+            {reminders.map((reminder, index) => (
+                 <div key={index} className="space-y-4 bg-slate-900/50 p-4 rounded-lg mb-4">
+                    <div className="flex items-center justify-between">
+                        <label htmlFor={`reminder-toggle-${index}`} className="font-semibold text-lg">{`Reminder ${index + 1}`}</label>
+                        <div className="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id={`reminder-toggle-${index}`} className="sr-only peer" checked={reminder.enabled} onChange={() => handleToggle(index)} />
+                            <div className="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                        </div>
+                    </div>
+                     <div className={`transition-opacity ${reminder.enabled ? 'opacity-100' : 'opacity-50'}`}>
+                        <div className="flex items-center justify-between">
+                           <label htmlFor={`reminder-time-${index}`} className="font-semibold">Time</label>
+                           <input type="time" id={`reminder-time-${index}`} disabled={!reminder.enabled} value={reminder.time} onChange={e => handleTimeChange(index, e.target.value)} className="bg-slate-700 border border-slate-600 rounded-md p-1"/>
+                        </div>
+                    </div>
+                </div>
+            ))}
+             <button onClick={handleSave} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-lg mt-6">Save Settings</button>
+        </Modal>
+    );
+};
+
 
 // --- Top-Level Component ---
 export default function App() {
@@ -459,6 +572,7 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
 
 
 
