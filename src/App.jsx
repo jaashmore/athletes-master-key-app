@@ -32,11 +32,11 @@ const appId = typeof __app_id !== 'undefined' ? __app_id : 'athlete-s-master-key
 // setLogLevel('debug'); // Use for debugging firestore
 
 
-// --- Enriched Course Content with Daily Lessons ---
+// --- Enriched Course Content with Daily Lessons & Expanded Intro ---
 const courseContent = [
     { week: 0, title: "Welcome to Your Mental Gym", icon: BrainCircuit, isIntro: true,
       concept: "Physical talent gets you to the game. Mental strength lets you win it.",
-      deeperDive: "You spend countless hours training your body: lifting, running, and practicing drills until they're perfect. But every top athlete knows that when the pressure is on, the real competition happens in the six inches between your ears. This 8-week course is your mental gym. Here, you will train the skills that separate the good from the great: focus under pressure, unshakeable confidence, and the ability to visualize success before it happens. Let's begin." },
+      deeperDive: "You spend countless hours training your body: lifting, running, and practicing drills until they're perfect. But every top athlete knows that when the pressure is on, the real competition happens in the six inches between your ears. The difference between a good athlete and a great one often comes down to who has the stronger mental game. This course is designed to be your personal mental gym, a place to build the focus, confidence, and resilience that define elite competitors.\n\nOver the next 8 weeks, you will learn and practice the core principles of sports psychology, adapted from the timeless wisdom of the Master Key System. We will move from foundational skills like controlling your thoughts and focus, to advanced techniques like high-definition visualization and building unshakable belief in your abilities. Each week builds on the last, creating a comprehensive mental toolkit you can use for the rest of your athletic career.\n\nYour commitment to these daily exercises is just as important as your commitment to your physical training. The drills are short but powerful. The journaling is designed to create self-awareness, which is the cornerstone of all improvement. By investing a few minutes each day, you are not just learning concepts; you are actively re-wiring your brain for success.\n\nThis journey is about more than just becoming a better athlete; it's about becoming a more focused, resilient, and confident person. The skills you build here will serve you long after you've left the field or court. Welcome to the first day of your new mental training regimen. Let's begin." },
     { 
       week: 1, 
       title: "The Mind as the Starting Block", 
@@ -44,7 +44,7 @@ const courseContent = [
       concept: "Every action is preceded by a thought. This week, we learn to become the calm observer of our thoughts, creating a space between an event and our reaction to it. This is the foundation of mental control.",
       weeklyIntro: "Welcome to Week 1. Before we can learn to direct our thoughts, we must first learn to simply observe them without judgment. Many athletes are controlled by their thoughts—a flash of doubt before a big play, a surge of anger after a mistake. They believe they *are* their thoughts. The goal this week is to break that illusion.\n\nThis week's drills are designed to build the foundational skill of awareness. By practicing stillness and non-reaction, you will start to create a small space between a thought and your response to it. This space is where all mental power resides. It's the difference between an impulsive, emotional reaction and a calm, calculated action. This is the most fundamental skill in all of mental training.",
       dailyLessons: [
-        { day: 1, title: "The Stillness Drill", instructions: "For 5 minutes, sit upright and remain physically still. Your only job is to notice thoughts without reacting. When your mind wanders, gently guide it back to stillness.", deeperDive: "This drill trains your prefrontal cortex to resist impulsive reactions, a key skill for staying calm under pressure. By consciously resisting the urge to react to every thought or physical impulse, you are building the mental muscle to stay calm under pressure. You're creating a 'mental pause button' that prevents you from being rattled by a bad call, a mistake, or an opponent's trash talk, allowing you to respond with logic instead of impulse." },
+        { day: 1, title: "The Stillness Drill", instructions: "For 5 minutes, sit upright and remain physically still. Your only job is to notice thoughts without reacting. When your mind wanders, gently guide it back to stillness.", deeperDive: "This drill trains your prefrontal cortex to resist impulsive reactions, a key skill for staying calm under pressure. By consciously resisting the urge to react to every thought or physical impulse, you are building the mental muscle to stay calm under pressure. You're creating a 'mental pause button' that prevents you from being emotionally rattled by a bad call, a mistake, or an opponent's trash talk, allowing you to respond with logic instead of impulse." },
         { day: 2, title: "Noticing the Chatter", instructions: "Repeat the 5-minute stillness drill. Today, pay special attention to the *types* of thoughts that appear. Are they about the past? The future? Your to-do list? Just notice, don't judge.", deeperDive: "By identifying your mental habits, you begin to see that they are just thoughts, not commands. This separation is the first step to taking control. You learn that just because a thought appears doesn't mean it's true or that you have to act on it. This is the foundation of breaking free from negative thought loops that can sabotage performance." },
         { day: 3, title: "Resisting Physical Impulses", instructions: "Repeat the 5-minute stillness drill. Today, your focus is on physical sensations. Notice the urge to scratch an itch, shift your weight, or fidget. Acknowledge the urge, but consciously choose not to act on it.", deeperDive: "Mental discipline and physical discipline are linked. Resisting small physical impulses strengthens your overall willpower, making it easier to push through fatigue or discomfort in a game. This drill proves to your brain that you are in charge, not your fleeting physical sensations. It builds the mental fortitude to stay composed when your body is screaming at you to stop." },
         { day: 4, title: "Extending the Time", instructions: "Today, we increase the challenge. Perform the stillness drill for 7 minutes. The goal is to maintain your composure and non-reaction as the duration increases.", deeperDive: "Just like lifting heavier weights, extending the time builds mental endurance. It trains your mind to stay focused and calm for longer periods, which is crucial for late-game situations. This extended duration challenges your ability to stay present and not get carried away by boredom or restlessness, which are common mental opponents in long competitions." },
@@ -152,28 +152,13 @@ const WeekCard = ({ weekData, currentWeek, onLearnMore, onSetWeek, onAdvanceWeek
     const uniqueJournalDays = countUniqueJournalDays(journalEntries[week]);
     const canAdvance = uniqueJournalDays >= 5;
 
-    useEffect(() => {
-        if (isCurrent || isCompleted) {
-            setIsExpanded(true);
-        }
-    }, [isCurrent, isCompleted]);
-
     const handleHeaderClick = () => {
-        if (isLocked || isCompleted) return; // Cannot collapse completed weeks
-        
-        if (isIntro) {
-            setIsExpanded(!isExpanded);
-        } else {
-            if (!isCurrent) {
-                onSetWeek(week);
-            } else {
-                setIsExpanded(!isExpanded); // Only allow toggling for the current week
-            }
-        }
+        if (isLocked) return;
+        setIsExpanded(!isExpanded);
     };
     
     let cardClasses = 'border-l-4 transition-all duration-300 ';
-    let headerClasses = (isLocked || isCompleted) ? 'cursor-default' : 'cursor-pointer';
+    let headerClasses = isLocked ? 'cursor-not-allowed' : 'cursor-pointer';
     if (isCurrent) cardClasses += 'bg-slate-800/80 border-teal-400 shadow-lg shadow-teal-500/10';
     else if (isCompleted || isIntro) cardClasses += 'bg-slate-800/30 border-sky-500';
     else { cardClasses += 'bg-slate-800/10 border-slate-700'; }
@@ -182,14 +167,14 @@ const WeekCard = ({ weekData, currentWeek, onLearnMore, onSetWeek, onAdvanceWeek
         <div className={`rounded-xl overflow-hidden mb-4 ${cardClasses}`}>
             <div className={`p-4 flex justify-between items-center ${headerClasses}`} onClick={handleHeaderClick}>
                 <div className="flex items-center"><div className={`flex items-center justify-center w-10 h-10 rounded-full mr-4 ${isCurrent ? 'bg-teal-400/20 text-teal-300' : 'bg-slate-700 text-slate-300'}`}>{isLocked ? <Lock size={20} /> : (isCompleted || isConclusion || isIntro) ? <CheckCircle size={20} className="text-sky-400" /> : <Icon size={20} />}</div><h2 className={`text-xl font-bold ${isCurrent ? 'text-white' : 'text-slate-300'}`}>{isIntro || isConclusion ? title : `Week ${week}: ${title}`}</h2></div>
-                {!isLocked && !isCompleted && !isIntro && <ChevronDown className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />}
+                {!isLocked && <ChevronDown className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />}
             </div>
             
             {isExpanded && !isLocked && (
                 <div className="p-4 border-t border-slate-700 animate-fade-in">
                     <p className="italic text-slate-300 mb-6 text-center">"{concept}"</p>
                     {isIntro ? (
-                        <div className="bg-slate-900/50 rounded-lg p-4 border border-slate-700 text-slate-300"><p>{weekData.deeperDive}</p></div>
+                        <div className="bg-slate-900/50 rounded-lg p-4 border border-slate-700 text-slate-300 whitespace-pre-line"><p>{weekData.deeperDive}</p></div>
                     ) : !isConclusion ? (
                         <>
                            <div className="bg-slate-900/50 rounded-lg p-4 mb-6 border border-slate-700">
@@ -498,6 +483,7 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
 
 
 
