@@ -179,16 +179,13 @@ const WeekCard = ({ weekData, currentWeek, onLearnMore, onOpenJournal, onSetWeek
                         <>
                            <div className="space-y-2 mb-6">
                                 {dailyLessons && dailyLessons.map((lesson, index) => (
-                                    <button key={index} onClick={() => onLearnMore(lesson)} className="w-full text-left p-3 bg-slate-900/50 hover:bg-slate-700/50 rounded-lg flex items-center justify-between transition-colors">
+                                    <button key={index} onClick={() => onLearnMore(lesson, weekData)} className="w-full text-left p-3 bg-slate-900/50 hover:bg-slate-700/50 rounded-lg flex items-center justify-between transition-colors">
                                         <span>Day {lesson.day}: {lesson.title}</span>
                                         <BookOpen size={16} className="text-sky-400"/>
                                     </button>
                                 ))}
                            </div>
-                           <button onClick={() => onOpenJournal(weekData)} className="w-full bg-teal-600 hover:bg-teal-500 p-4 rounded-lg text-left transition-transform transform hover:scale-105 flex items-center justify-center text-lg font-bold">
-                                <NotebookText className="mr-2" size={20}/>
-                                <span>Journal ({uniqueJournalDays} / 5 days)</span>
-                           </button>
+                           <p className="text-center text-sm text-slate-400 mb-4">You have journaled on {uniqueJournalDays} of the required 5 days this week.</p>
                             {isCurrent && week < 8 && (<div className="mt-6 text-center"><button onClick={onAdvanceWeek} disabled={!canAdvance} className="bg-teal-500 hover:bg-teal-400 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all transform disabled:scale-100 hover:scale-105"><span>{canAdvance ? "Complete Week & Unlock Next" : `Journal on ${5 - uniqueJournalDays} more day(s) to unlock`}</span></button></div>)}
                             {isCurrent && week === 8 && (<div className="mt-6 text-center"><button onClick={onAdvanceWeek} disabled={!canAdvance} className="bg-teal-500 hover:bg-teal-400 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all transform disabled:scale-100 hover:scale-105"><span>{canAdvance ? "Finish Course & View Conclusion" : `Journal on ${5-uniqueJournalDays} more day(s)`}</span></button></div>)}
                         </>
@@ -327,7 +324,7 @@ const AppCore = ({ user }) => {
     };
     useEffect(() => { if (recognition) recognition.onend = () => setIsListening(false); }, []);
   
-    const handleLearnMore = (lessonData) => { setModalData(lessonData); setModalType('lesson'); };
+    const handleLearnMore = (lessonData, weekData) => { setModalData({lesson: lessonData, week: weekData}); setModalType('lesson'); };
     const handleOpenJournal = (weekData) => { 
         setModalData(weekData); 
         setModalType('journal'); 
@@ -388,7 +385,7 @@ const AppCore = ({ user }) => {
     const renderModalContent = () => {
         if (!modalType) return null;
         
-        if (modalType === 'lesson') return <Modal onClose={closeModal} size="xl"><div className="max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar"><h2 className="text-3xl font-bold text-sky-400 mb-2">{modalData.title}</h2><div className="border-t border-slate-700 my-4"></div><h3 className="text-xl font-bold text-teal-300 mb-2">The Drill</h3><p className="text-slate-300 mb-4">{modalData.instructions}</p><h3 className="text-xl font-bold text-teal-300 mb-2">Deeper Dive: The 'Why' Behind It</h3><p className="text-slate-300">{modalData.deeperDive}</p></div><button onClick={closeModal} className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg mt-6">Close</button></Modal>;
+        if (modalType === 'lesson') return <Modal onClose={closeModal} size="xl"><div className="max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar"><h2 className="text-3xl font-bold text-sky-400 mb-2">{modalData.lesson.title}</h2><div className="border-t border-slate-700 my-4"></div><h3 className="text-xl font-bold text-teal-300 mb-2">The Drill</h3><p className="text-slate-300 mb-4">{modalData.lesson.instructions}</p><h3 className="text-xl font-bold text-teal-300 mb-2">Deeper Dive: The 'Why' Behind It</h3><p className="text-slate-300">{modalData.lesson.deeperDive}</p><div className="mt-6"><button onClick={() => {closeModal(); setTimeout(() => handleOpenJournal(modalData.week), 200)}} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center text-lg">Journal About This Lesson</button></div></div></Modal>;
         if (modalType === 'journal') {
             const weekEntries = journalEntries[modalData.week] || [];
             const dailyPrompt = getDailyJournalPrompt(modalData);
@@ -462,3 +459,4 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
