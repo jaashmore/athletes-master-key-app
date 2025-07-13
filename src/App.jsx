@@ -10,7 +10,7 @@ import {
     signInWithPopup,
     signOut
 } from 'firebase/auth';
-import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award } from 'lucide-react';
+import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award, Bell } from 'lucide-react';
 
 // --- Firebase Configuration ---
 // Your web app's Firebase configuration
@@ -117,7 +117,7 @@ const Modal = ({ children, onClose, size = 'lg' }) => (
     </div>
 );
 
-const Header = ({ currentWeek, onLogout, onOpenMasterJournal }) => {
+const Header = ({ currentWeek, onLogout, onOpenReminders, onOpenMasterJournal }) => {
     const totalWeeks = courseContent.filter(c => !c.isIntro && !c.isConclusion).length;
     const progress = currentWeek > 1 ? ((currentWeek - 1) / totalWeeks) * 100 : 0;
     
@@ -127,6 +127,7 @@ const Header = ({ currentWeek, onLogout, onOpenMasterJournal }) => {
                 <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400">My Mental Gym</h1>
                 <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center space-x-2">
                     <button onClick={onOpenMasterJournal} className="p-2 text-slate-400 hover:text-white" title="View All Journal Entries"><NotebookText size={20} /></button>
+                    <button onClick={onOpenReminders} className="p-2 text-slate-400 hover:text-white" title="Set Reminders"><Bell size={20} /></button>
                     <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white" title="Logout"><LogOut size={20} /></button>
                 </div>
             </div>
@@ -390,6 +391,9 @@ const AppCore = ({ user }) => {
     const renderModalContent = () => {
         if (!modalType) return null;
         
+        if (modalType === 'reminder') {
+             return <ReminderModal onClose={closeModal} />;
+        }
         if (modalType === 'masterJournal') {
             const allEntries = Object.values(journalEntries).flat().sort((a,b) => new Date(b.date) - new Date(a.date));
             return (
@@ -451,7 +455,7 @@ const AppCore = ({ user }) => {
     
     return (
         <div className="bg-slate-900 text-white min-h-screen font-sans">
-            <Header currentWeek={currentWeek} onLogout={handleLogout} />
+            <Header currentWeek={currentWeek} onLogout={handleLogout} onOpenMasterJournal={() => setModalType('masterJournal')} onOpenReminders={() => setModalType('reminder')} />
             <main className="w-full max-w-4xl mx-auto p-4">
                 {courseContent.map(weekData => ( <WeekCard key={weekData.week} weekData={weekData} currentWeek={currentWeek} onLearnMore={handleLearnMore} onOpenJournal={handleOpenJournal} onSetWeek={setCurrentWeek} onAdvanceWeek={handleAdvanceWeek} uniqueJournalDays={countUniqueJournalDays(journalEntries[weekData.week])} journalEntries={journalEntries}/> ))}
             </main>
@@ -463,6 +467,79 @@ const AppCore = ({ user }) => {
         </div>
     );
 }
+
+const ReminderModal = ({ onClose }) => {
+    const [reminders, setReminders] = useState([
+        { enabled: false, time: '08:00' },
+        { enabled: false, time: '18:00' }
+    ]);
+
+    useEffect(() => {
+        const savedReminders = localStorage.getItem('reminders');
+        if (savedReminders) {
+            setReminders(JSON.parse(savedReminders));
+        }
+    }, []);
+
+    const handleSave = async () => {
+        const wantsToEnable = reminders.some(r => r.enabled);
+        if (wantsToEnable && Notification.permission === 'denied') {
+            alert("Notifications are blocked in your browser settings. Please enable them to receive reminders.");
+            return;
+        }
+        if (wantsToEnable && Notification.permission === 'default') {
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                alert("Permission was not granted. Reminders will remain off.");
+                const disabledReminders = reminders.map(r => ({ ...r, enabled: false }));
+                localStorage.setItem('reminders', JSON.stringify(disabledReminders));
+                setReminders(disabledReminders);
+                return;
+            }
+        }
+        localStorage.setItem('reminders', JSON.stringify(reminders));
+        alert("Reminder settings saved!");
+        onClose();
+    };
+
+    const handleToggle = (index) => {
+        setReminders(currentReminders => 
+            currentReminders.map((r, i) => i === index ? { ...r, enabled: !r.enabled } : r)
+        );
+    };
+
+    const handleTimeChange = (index, time) => {
+        setReminders(currentReminders => 
+            currentReminders.map((r, i) => i === index ? { ...r, time: time } : r)
+        );
+    };
+
+    return (
+        <Modal onClose={onClose} size="md">
+            <h2 className="text-3xl font-bold text-sky-400 mb-4">Daily Reminders</h2>
+            <p className="text-slate-300 mb-6 text-sm">Set up to two daily reminders. Note: For these web-based notifications to work, your browser must be running at the scheduled time.</p>
+            {reminders.map((reminder, index) => (
+                 <div key={index} className="space-y-4 bg-slate-900/50 p-4 rounded-lg mb-4">
+                    <div className="flex items-center justify-between">
+                        <label htmlFor={`reminder-toggle-${index}`} className="font-semibold text-lg">{`Reminder ${index + 1}`}</label>
+                        <div className="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id={`reminder-toggle-${index}`} className="sr-only peer" checked={reminder.enabled} onChange={() => handleToggle(index)} />
+                            <div className="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                        </div>
+                    </div>
+                     <div className={`transition-opacity ${reminder.enabled ? 'opacity-100' : 'opacity-50'}`}>
+                        <div className="flex items-center justify-between">
+                           <label htmlFor={`reminder-time-${index}`} className="font-semibold">Time</label>
+                           <input type="time" id={`reminder-time-${index}`} disabled={!reminder.enabled} value={reminder.time} onChange={e => handleTimeChange(index, e.target.value)} className="bg-slate-700 border border-slate-600 rounded-md p-1"/>
+                        </div>
+                    </div>
+                </div>
+            ))}
+             <button onClick={handleSave} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-lg mt-6">Save Settings</button>
+        </Modal>
+    );
+};
+
 
 // --- Top-Level Component ---
 export default function App() {
@@ -483,6 +560,7 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
+
 
 
 
