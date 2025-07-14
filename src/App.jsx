@@ -36,7 +36,7 @@ const appId = typeof __app_id !== 'undefined' ? __app_id : 'athlete-s-master-key
 const courseContent = [
     { week: 0, title: "Welcome to Your Mental Gym", icon: BrainCircuit, isIntro: true,
       concept: "Physical talent gets you to the game. Mental strength lets you win it.",
-      deeperDive: "You spend countless hours training your body: lifting, running, and practicing drills until they're perfect. But every top athlete knows that when the pressure is on, the real competition happens in the six inches between your ears. The difference between a good athlete and a great one often comes down to who has the stronger mental game. This course is designed to be your personal mental gym, a place to build the focus, confidence, and resilience that define elite competitors.\n\nOver the next 8 weeks, you will learn and practice the core principles of sports psychology, adapted from the timeless wisdom of the Master Key System. We will move from foundational skills like controlling your thoughts and focus, to advanced techniques like high-definition visualization and building unshakable belief in your abilities. Each week builds on the last, creating a comprehensive mental toolkit you can use for the rest of your athletic career.\n\nYour commitment to these daily exercises is just as important as your commitment to your physical training. The drills are short but powerful. The journaling is designed to create self-awareness, which is the cornerstone of all improvement. By investing a few minutes each day, you are not just learning concepts; you are actively re-wiring your brain for success.\n\nThis journey is about more than just becoming a better athlete; it's about becoming a more focused, resilient, and confident person. The skills you build here will serve you long after you've left the field or court. Welcome to the first day of your new mental training regimen. Let's begin." },
+      deeperDive: "You spend countless hours training your body: lifting, running, and practicing drills until they're perfect. But every top athlete knows that when the pressure is on, the real competition happens in the six inches between your ears. This 8-week course is your mental gym. Here, you will train the skills that separate the good from the great: focus under pressure, unshakeable confidence, and the ability to visualize success before it happens. Let's begin." },
     { 
       week: 1, 
       title: "The Mind as the Starting Block", 
@@ -123,9 +123,12 @@ const Header = ({ currentWeek, onLogout, onOpenReminders, onOpenMasterJournal })
     
     return (
         <header className="w-full max-w-4xl mx-auto p-4 sticky top-0 z-10 bg-slate-900/80 backdrop-blur-lg">
-            <div className="text-center mb-2 relative">
-                <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400">My Mental Gym</h1>
-                <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center space-x-2">
+            <div className="flex justify-between items-center mb-2">
+                <div className="w-1/3"></div>
+                <div className="w-1/3 text-center">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400 truncate min-w-0">My Mental Gym</h1>
+                </div>
+                <div className="w-1/3 flex justify-end items-center space-x-2">
                     <button onClick={onOpenMasterJournal} className="p-2 text-slate-400 hover:text-white" title="View All Journal Entries"><NotebookText size={20} /></button>
                     <button onClick={onOpenReminders} className="p-2 text-slate-400 hover:text-white" title="Set Reminders"><Bell size={20} /></button>
                     <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white" title="Logout"><LogOut size={20} /></button>
@@ -455,7 +458,7 @@ const AppCore = ({ user }) => {
     
     return (
         <div className="bg-slate-900 text-white min-h-screen font-sans">
-            <Header currentWeek={currentWeek} onLogout={handleLogout} onOpenMasterJournal={() => setModalType('masterJournal')} onOpenReminders={() => setModalType('reminder')} />
+            <Header currentWeek={currentWeek} onLogout={handleLogout} onOpenReminders={() => setModalType('reminder')} onOpenMasterJournal={() => setModalType('masterJournal')} />
             <main className="w-full max-w-4xl mx-auto p-4">
                 {courseContent.map(weekData => ( <WeekCard key={weekData.week} weekData={weekData} currentWeek={currentWeek} onLearnMore={handleLearnMore} onOpenJournal={handleOpenJournal} onSetWeek={setCurrentWeek} onAdvanceWeek={handleAdvanceWeek} uniqueJournalDays={countUniqueJournalDays(journalEntries[weekData.week])} journalEntries={journalEntries}/> ))}
             </main>
@@ -560,16 +563,3 @@ export default function App() {
 
     return user ? <AppCore user={user} /> : <LoginScreen />;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
