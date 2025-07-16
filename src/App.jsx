@@ -10,10 +10,9 @@ import {
     signInWithPopup,
     signOut
 } from 'firebase/auth';
-import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award, Bell } from 'lucide-react';
+import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award, ShoppingCart } from 'lucide-react';
 
 // --- Firebase Configuration ---
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBFKdpRCWWHJcMyhnA3IVN6tXzLKJj_cck",
   authDomain: "athlete-s-master-key.firebaseapp.com",
@@ -28,122 +27,75 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'athlete-s-master-key'; // Use your project ID as a fallback
-// setLogLevel('debug'); // Use for debugging firestore
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'athlete-s-master-key';
+// setLogLevel('debug');
 
 
-// --- Enriched Course Content with Daily Lessons & Expanded Intro ---
+// --- Full 24-Week Course Content ---
 const courseContent = [
-    { week: 0, title: "Welcome to Your Mental Gym", icon: BrainCircuit, isIntro: true,
-      concept: "Physical talent gets you to the game. Mental strength lets you win it.",
-      deeperDive: "You spend countless hours training your body: running, lifting, and practicing drills until they're perfect. But every top athlete knows that when the pressure is on, the real competition happens in the six inches between your ears. The difference between a good athlete and a great one often comes down to who has the stronger mental game. This course is designed to be your personal mental gym, a place to build the focus, confidence, and resilience that define elite competitors.\n\nOver the next 8 weeks, you will learn and practice the core principles of sports psychology, adapted from the timeless wisdom of the Master Key System. We will move from foundational skills like controlling your thoughts and focus, to advanced techniques like high-definition visualization and building unshakable belief in your abilities. Each week builds on the last, creating a comprehensive mental toolkit you can use for the rest of your athletic career.\n\nYour commitment to these daily exercises is just as important as your commitment to your physical training. The drills are short but powerful. The journaling is designed to create self-awareness, which is the cornerstone of all improvement. By investing a few minutes each day, you are not just learning concepts; you are actively re-wiring your brain for success.\n\nThis journey is about more than just becoming a better athlete; it's about becoming a more focused, resilient, and confident person. The skills you build here will serve you long after you've left the field or court. Welcome to the first day of your new mental training regimen. Let's begin." },
-    { 
-      week: 1, 
-      title: "The Mind as the Starting Block", 
-      icon: Dribbble,
-      concept: "Every action is preceded by a thought. This week, we learn to become the calm observer of our thoughts, creating a space between an event and our reaction to it. This is the foundation of mental control.",
-      weeklyIntro: "Welcome to Week 1. Before we can learn to direct our thoughts, we must first learn to simply observe them without judgment. Many athletes are controlled by their thoughts—a flash of doubt before a big play, a surge of anger after a mistake. They believe they *are* their thoughts. The goal this week is to break that illusion.\n\nThis week's drills are designed to build the foundational skill of awareness. By practicing stillness and non-reaction, you will start to create a small space between a thought and your response to it. This space is where all mental power resides. It's the difference between an impulsive, emotional reaction and a calm, calculated action. This is the most fundamental skill in all of mental training.",
-      dailyLessons: [
-        { day: 1, title: "The Stillness Drill", instructions: "For 5 minutes, sit upright and remain physically still. Your only job is to notice thoughts without reacting. When your mind wanders, gently guide it back to stillness.", deeperDive: "This drill trains your prefrontal cortex to resist impulsive reactions, a key skill for staying calm under pressure. By consciously resisting the urge to react to every thought or physical impulse, you are building the mental muscle to stay calm under pressure. You're creating a 'mental pause button' that prevents you from being emotionally rattled by a bad call, a mistake, or an opponent's trash talk, allowing you to respond with logic instead of impulse." },
-        { day: 2, title: "Noticing the Chatter", instructions: "Repeat the 5-minute stillness drill. Today, pay special attention to the *types* of thoughts that appear. Are they about the past? The future? Your to-do list? Just notice, don't judge.", deeperDive: "By identifying your mental habits, you begin to see that they are just thoughts, not commands. This separation is the first step to taking control. You learn that just because a thought appears doesn't mean it's true or that you have to act on it. This is the foundation of breaking free from negative thought loops that can sabotage performance." },
-        { day: 3, title: "Resisting Physical Impulses", instructions: "Repeat the 5-minute stillness drill. Today, your focus is on physical sensations. Notice the urge to scratch an itch, shift your weight, or fidget. Acknowledge the urge, but consciously choose not to act on it.", deeperDive: "Mental discipline and physical discipline are linked. Resisting small physical impulses strengthens your overall willpower, making it easier to push through fatigue or discomfort in a game. This drill proves to your brain that you are in charge, not your fleeting physical sensations. It builds the mental fortitude to stay composed when your body is screaming at you to stop." },
-        { day: 4, title: "Extending the Time", instructions: "Today, we increase the challenge. Perform the stillness drill for 7 minutes. The goal is to maintain your composure and non-reaction as the duration increases.", deeperDive: "Just like lifting heavier weights, extending the time builds mental endurance. It trains your mind to stay focused and calm for longer periods, which is crucial for late-game situations. This extended duration challenges your ability to stay present and not get carried away by boredom or restlessness, which are common mental opponents in long competitions." },
-        { day: 5, title: "Connecting to Your Sport", instructions: "Before your 7-minute drill, briefly visualize a recent, frustrating moment from a game or practice. Then, during the drill, if frustrating thoughts arise, practice letting them go just like any other thought.", deeperDive: "This exercise connects the abstract skill of stillness to real-world athletic scenarios. You are training your brain to detach from the emotion of a mistake and return to a neutral, focused state. It's one thing to be calm in a quiet room; it's another to be calm after a turnover. This drill helps bridge that gap." },
-        { day: 6, title: "The 10-Minute Challenge", instructions: "Today's drill is 10 minutes of complete stillness. Embrace the challenge. Notice how your mind and body feel as you push past your previous limits.", deeperDive: "Pushing your mental limits in a controlled setting builds profound confidence. When you know you can stay calm and focused for 10 minutes, a 30-second timeout feels like an eternity of calm. This builds a deep-seated belief in your mental resilience that you can draw upon when the pressure is at its highest." },
-        { day: 7, title: "Weekly Reflection", instructions: "Perform the stillness drill for a final 10 minutes. Afterward, use the journal to reflect on the entire week's progress.", deeperDive: "Reflection solidifies learning. By looking back on the week's challenges and successes, you cement the new neural pathways you've started to build. It helps you understand your own mental patterns and prepares you for the next stage of your training, where you'll actively direct your thoughts instead of just observing them." }
-      ],
-      journalPrompts: [
-          "Describe the 'chatter' in your mind. What kinds of thoughts kept popping up?",
-          "What types of thoughts did you notice today? Were they mostly about the past, present, or future?",
-          "What was the strongest physical urge you resisted during the drill? How did it feel to not act on it?",
-          "How did the longer duration feel? Was there a point where it became more difficult?",
-          "Did the memory of the frustrating moment affect your drill? Were you able to let it go?",
-          "What was the most challenging part of the 10-minute drill? How did you overcome it?",
-          "What was the biggest lesson you learned about your own mind this week?"
-      ]
-    },
-    { 
-      week: 2, 
-      title: "Control the Mental Locker Room", 
-      icon: BrainCircuit, 
-      concept: "Your brain forms habits through neural pathways. Negative self-talk is a reinforced habit. This week, we strategically stop walking that path and start cutting a new one.",
-      weeklyIntro: "Last week, you learned to observe your thoughts. This week, you become the gatekeeper of your mind. Your inner voice can be your greatest coach or your harshest critic. For many athletes, the inner critic runs the show, replaying mistakes and fueling doubt. This week is about firing that critic and hiring a coach.\n\nWe will use a powerful technique to actively intervene in your thought patterns. This isn't about pretending negative thoughts don't exist; it's about acknowledging them and consciously choosing a more powerful, productive response. You are learning to control the narrative in your head, which directly influences your confidence and actions on the field.",
-      dailyLessons: [
-        { day: 1, title: "Identifying the Negative Voice", instructions: "Throughout the day, act as a detective for your own thoughts. When you make a mistake or feel frustrated, what is the first thing you say to yourself? Write down at least one negative self-talk phrase you notice.", deeperDive: "Awareness is the first step to change. You cannot fix a habit you don't know you have. Today is about gathering intelligence on your inner critic so you can understand its tactics and triggers." },
-        { day: 2, title: "The 'STOP' Command", instructions: "Today, when you catch a negative thought, mentally (or even out loud, if you're alone) shout 'STOP!'. Visualize a big red stop sign. The goal is simply to interrupt the pattern.", deeperDive: "This interruption breaks the automatic loop of a negative thought. It's a conscious intervention that prevents the thought from spiraling and affecting your emotional state. You are asserting control and showing your brain that this thought pattern is no longer acceptable." },
-        { day: 3, title: "Crafting Your Replacement", instructions: "Take the negative phrases you identified on Day 1. For each one, write a powerful, positive, and believable replacement. Instead of 'Don't mess up,' write 'I am focused and prepared.'", deeperDive: "Your replacement statements must be believable to you. If they are too generic or unbelievable, your mind will reject them. They should be grounded in the effort you put in, such as 'I trust my training' or 'I've made this shot a thousand times.'" },
-        { day: 4, title: "Full Integration: Stop & Replace", instructions: "Now, combine the steps. When you catch a negative thought, shout 'STOP!' and immediately follow it with one of your powerful replacement statements. Do this every single time you notice the inner critic.", deeperDive: "This is where neuroplasticity happens. You are actively weakening the old, negative neural pathway and building a new, positive one. It feels like work at first, but with each repetition, the new pathway becomes stronger and more automatic." },
-        { day: 5, title: "Applying it to Physical Drills", instructions: "During your physical practice today, make a conscious effort to use the Stop & Replace technique. If you miss a shot or make a mistake in a drill, immediately interrupt any negative self-talk.", deeperDive: "The moments immediately following a mistake are the most critical for mental control. By using this technique during practice, you are training yourself to have a resilient response when it matters most in a game. You're building a habit of bouncing back instantly." },
-        { day: 6, title: "Replacing 'Don't' with 'Do'", instructions: "Focus on your language today. Notice how often you tell yourself 'Don't miss' or 'Don't mess up.' Replace these with 'Do' statements: 'Make this shot,' 'Focus on the target,' 'Execute with precision.'", deeperDive: "Your brain doesn't process negatives well. If you say 'Don't think about a pink elephant,' you immediately think of one. By focusing on what you *want* to do, you give your brain a clear, positive command to follow, which is far more effective than telling it what to avoid." },
-        { day: 7, title: "Weekly Reflection", instructions: "Review your journal entries for the week. How has becoming aware of your self-talk changed your mood or performance in training?", deeperDive: "Recognizing the shift in your internal dialogue is powerful. It proves that you have the ability to change your mindset. This reflection reinforces the effectiveness of the technique and builds your confidence to continue using it as a core mental skill." }
-      ],
-      journalPrompts: [
-          "What was the most common negative thought you caught yourself saying today?",
-          "Describe the feeling of interrupting a negative thought. Did it feel empowering?",
-          "What is one of your new, powerful replacement statements? Why is it believable to you?",
-          "Did you use the Stop & Replace technique today? Describe the situation and the outcome.",
-          "How did using this technique during physical practice affect your next attempt?",
-          "What was one 'Don't' statement you changed to a 'Do' statement today?",
-          "What was the biggest change you noticed in your mindset this week?"
-      ]
-    },
-    // Weeks 3-8 would be similarly structured with 7 daily lessons each.
-    // For brevity, the rest of the weeks will follow the old format in this example.
-    { week: 3, title: "The Power of Unwavering Focus", icon: Target, concept: "...", dailyLessons: [], journalPrompts: ["..."], deeperDive: "..." },
-    { week: 4, title: "Building Your Mental Blueprint", icon: BrainCircuit, concept: "...", dailyLessons: [], journalPrompts: ["..."], deeperDive: "..." },
-    { week: 5, title: "HD Visualization: Making It Real", icon: Star, concept: "...", dailyLessons: [], journalPrompts: ["..."], deeperDive: "..." },
-    { week: 6, title: "Defining Your Victory", icon: Target, concept: "...", dailyLessons: [], journalPrompts: ["..."], deeperDive: "..." },
-    { week: 7, title: "Building Unshakable Belief", icon: Star, concept: "...", dailyLessons: [], journalPrompts: ["..."], deeperDive: "..." },
-    { week: 8, title: "Game Day Integration", icon: Dribbble, concept: "...", dailyLessons: [], journalPrompts: ["..."], deeperDive: "..." },
-    { week: 9, title: "The Journey Continues", icon: Award, isConclusion: true,
-      concept: "You have successfully completed the 8-week foundation. But this is not the end; it's the beginning. Mental strength, like physical strength, requires consistent training. The tools you've learned are now part of your permanent toolkit.",
-      deeperDive: "Just as you don't stop lifting weights after one season, you don't stop mental training after one course. Consistency is the key to making these skills second nature. Continue to use your Performance Prime Routine before every game. Revisit the visualization and focus drills whenever you face a new challenge. Your mind is your greatest athletic asset—keep it sharp. The journey to mental mastery is ongoing, and you now have the map." }
+    { week: 0, title: "Welcome to Your Mental Gym", icon: BrainCircuit, isIntro: true, concept: "Physical talent gets you to the game. Mental strength lets you win it.", deeperDive: "You spend countless hours training your body: lifting, running, and practicing drills until they're perfect. But every top athlete knows that when the pressure is on, the real competition happens in the six inches between your ears. This 24-week course is your mental gym. Here, you will train the skills that separate the good from the great: focus under pressure, unshakeable confidence, and the ability to visualize success before it happens. Let's begin." },
+    // BLOCK 1
+    { week: 1, title: "The Mind as the Starting Block", icon: Dribbble, concept: "Every action is preceded by a thought. This week, we learn to become the calm observer of our thoughts.", weeklyIntro: "Welcome to Week 1. Before we can learn to direct our thoughts, we must first learn to simply observe them without judgment. This week's drills are designed to build the foundational skill of awareness.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 2, title: "Control the Mental Locker Room", icon: BrainCircuit, concept: "Your brain forms habits through neural pathways. This week, we strategically re-wire your automatic mental responses.", weeklyIntro: "Last week, you learned to observe your thoughts. This week, you become the gatekeeper of your mind. You will learn to control the narrative in your head, which directly influences your confidence.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 3, title: "The Power of Unwavering Focus", icon: Target, concept: "Focus is a muscle. This week, we train your ability to consciously direct your attention and hold it steady.", weeklyIntro: "Now that you can observe and manage your thoughts, it's time to build your focus. This week, you'll learn to direct your attention like a laser beam.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 4, title: "Building Your Mental Blueprint", icon: BrainCircuit, concept: "Your brain doesn't know the difference between a vividly imagined action and a real one. This week, you become the architect of your success.", weeklyIntro: "This week, we move from simple focus to active creation by building a detailed mental blueprint of a perfect performance.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 5, title: "HD Visualization: Making It Real", icon: Star, concept: "A blurry mental image has little power. A rich, multi-sensory visualization is what truly convinces your subconscious mind.", weeklyIntro: "Last week, you were the director. This week, you become the star. We will upgrade your mental blueprint to High Definition by engaging all your senses and emotions.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 6, title: "Defining Your Victory", icon: Target, concept: "A vague wish gives your brain no direction. A clear, present-tense goal gives it a powerful command.", weeklyIntro: "This week, you will learn to program your brain's internal 'GPS' with a powerful statement of purpose.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 7, title: "Building Unshakable Belief", icon: Star, concept: "Belief isn't just a thought; it's a feeling of certainty. The fastest way to build belief is to borrow the feeling from a past success.", weeklyIntro: "This week, we will connect the dots. You will learn to harness the powerful, positive emotions from your past victories and anchor them to your new goals.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 8, title: "Game Day Integration", icon: Dribbble, concept: "This isn't a superstition; it's a strategic mental warm-up to shift you into your 'performance state' on command.", weeklyIntro: "All the training from the past seven weeks culminates in this final step: creating a simple, powerful, and repeatable pre-performance routine.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    // BLOCK 2
+    { week: 9, block: 2, title: "Performing Under Pressure", icon: Award, concept: "Pressure is a privilege. This week, you learn to dictate your mental state to the situation.", weeklyIntro: "You've built the foundational tools. Now, it's time to test them under fire. By practicing in simulated high-stakes scenarios, you train your nervous system to remain calm and focused when the real pressure hits.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 10, block: 2, title: "The Resilient Athlete", icon: Award, concept: "Resilience isn't about never failing; it's about bouncing back faster.", weeklyIntro: "Every athlete faces setbacks. This week, we will train your 'bounce-back' ability, turning failures into valuable learning opportunities.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 11, block: 2, title: "Advanced Visualization: Opponent Modeling", icon: Award, concept: "Mentally scout your opponents to create a strategic advantage.", weeklyIntro: "Basic visualization perfects your actions. Advanced visualization anticipates and overcomes the actions of others. This week, you'll learn to feel one step ahead of the competition.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 12, block: 2, title: "The Leader's Mindset", icon: Award, concept: "Leadership is a skill, not just a title. This week is about cultivating the mental habits of a leader.", weeklyIntro: "Every athlete can lead through presence and work ethic. This week, you will practice the mental drills that build a leadership presence that stabilizes and inspires your team.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 13, block: 2, title: "The Confidence Bank", icon: Award, concept: "Confidence comes from evidence. This week is about actively collecting and reviewing proof of your competence.", weeklyIntro: "Unshakable confidence comes from consistently remembering the many times you've succeeded. This week, you will become the accountant for your own 'Confidence Bank.'", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 14, block: 2, title: "Automating Your Skills", icon: Award, concept: "Make your mental skills as automatic as your physical ones.", weeklyIntro: "The goal of a true master is to make skills so ingrained that they become automatic. This week is about reducing the conscious effort required to use your mental tools.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 15, block: 2, title: "The Off-Season Mind", icon: Award, concept: "Mental training doesn't stop when the season ends.", weeklyIntro: "The off-season is where champions are made. This week is about applying your mental skills to your off-season training to start the next season mentally tougher.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 16, block: 2, title: "The 'Why' Revisited", icon: Award, concept: "Reconnect with your deepest motivation for playing your sport.", weeklyIntro: "Your 'Why' is the ultimate fuel source. This week, we will reconnect with that core passion to create motivation that is far more powerful than any external reward.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    // BLOCK 3
+    { week: 17, block: 3, title: "Advanced Anchoring", icon: Star, concept: "Create different anchors for different mental states.", weeklyIntro: "You've learned to create a single anchor for confidence. Now, we'll expand your toolkit to give you precise control over your psychology in any situation.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 18, block: 3, title: "Team Visualization", icon: Star, concept: "Extend your mental game to your entire team.", weeklyIntro: "When a team shares a common vision, they become more than the sum of their parts. This week, you will practice visualizing not just your own success, but the success of your team.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 19, block: 3, title: "Handling External Pressure", icon: Star, concept: "Build a mental shield against pressure from parents, coaches, and scouts.", weeklyIntro: "This week, you will learn to differentiate between what you can control and what you can't, making you immune to the distractions and anxieties from the outside world.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 20, block: 3, title: "The 'Inner Coach' Dialogue", icon: Star, concept: "Turn your mind into your most trusted advisor.", weeklyIntro: "Instead of just replacing a single thought, you will learn to have a full, constructive internal dialogue with your 'Inner Coach,' the wise and strategic part of your mind.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 21, block: 3, title: "Long-Term Goal Setting", icon: Star, concept: "Apply your goal-setting skills to your long-term athletic and life ambitions.", weeklyIntro: "A compelling long-term vision provides a powerful context for your daily efforts, creating a source of nearly limitless motivation.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 22, block: 3, title: "The Mind-Body Connection", icon: Star, concept: "Use your mind to build a stronger, more resilient body.", weeklyIntro: "Your mental state directly affects your physical recovery and susceptibility to injury. This week, we focus on using your mental skills to enhance your physical well-being.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 23, block: 3, title: "The Gratitude Edge", icon: Star, concept: "Use gratitude to reduce performance anxiety and increase enjoyment.", weeklyIntro: "Gratitude is the powerful antidote to the burnout that comes from constantly striving. A happy, grateful athlete is often a more relaxed and successful one.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 24, block: 3, title: "The Complete Athlete", icon: Star, concept: "Integrate all your mental skills into your identity.", weeklyIntro: "This final week is about integration and creating a personal plan to ensure these skills become a permanent part of who you are.", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
+    { week: 25, title: "The Journey Continues", icon: Award, isConclusion: true, concept: "You have successfully completed the 24-week program. This is not the end; it's the beginning.", deeperDive: "Mental strength, like physical strength, requires consistent training. The tools you've learned are now part of your permanent toolkit. Continue to use them, and your mind will become your greatest athletic asset." }
 ];
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = SpeechRecognition ? new SpeechRecognition() : null;
-if (recognition) {
-  recognition.continuous = true;
-  recognition.interimResults = true;
-}
-
-// --- Component Definitions (in one file) ---
-
+// --- Component Definitions ---
 const LoadingSpinner = () => <div className="flex justify-center items-center h-full w-full"><div className="animate-spin rounded-full h-16 w-16 border-b-4 border-teal-400"></div></div>;
-
-const Modal = ({ children, onClose, size = 'lg' }) => (
-    <div className="fixed inset-0 bg-slate-900 bg-opacity-70 z-50 flex justify-center items-center p-4 backdrop-blur-sm" onClick={onClose}>
-        <div className={`bg-slate-800 rounded-2xl shadow-2xl w-full max-w-${size} p-6 relative text-white border border-slate-700 animate-fade-in-up`} onClick={e => e.stopPropagation()}>{children}</div>
-    </div>
-);
-
-const Header = ({ currentWeek, onLogout, onOpenReminders, onOpenMasterJournal }) => {
+const Modal = ({ children, onClose, size = 'lg' }) => ( <div className="fixed inset-0 bg-slate-900 bg-opacity-70 z-50 flex justify-center items-center p-4 backdrop-blur-sm" onClick={onClose}><div className={`bg-slate-800 rounded-2xl shadow-2xl w-full max-w-${size} p-6 relative text-white border border-slate-700 animate-fade-in-up`} onClick={e => e.stopPropagation()}>{children}</div></div>);
+const Header = ({ currentWeek, onLogout, onOpenMasterJournal }) => {
     const totalWeeks = courseContent.filter(c => !c.isIntro && !c.isConclusion).length;
     const progress = currentWeek > 1 ? ((currentWeek - 1) / totalWeeks) * 100 : 0;
     
     return (
         <header className="w-full max-w-4xl mx-auto p-4 sticky top-0 z-10 bg-slate-900/80 backdrop-blur-lg">
             <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center space-x-2">
-                    <button onClick={onOpenMasterJournal} className="p-2 text-slate-400 hover:text-white" title="View All Journal Entries"><NotebookText size={20} /></button>
-                    <button onClick={onOpenReminders} className="p-2 text-slate-400 hover:text-white" title="Set Reminders"><Bell size={20} /></button>
+                <div className="w-1/3"></div>
+                <div className="w-1/3 text-center">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400 truncate min-w-0">My Mental Gym</h1>
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-sky-400">My Mental Gym</h1>
-                <div className="flex items-center space-x-2">
-                     <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white" title="Logout"><LogOut size={20} /></button>
+                <div className="w-1/3 flex justify-end items-center space-x-2">
+                    <button onClick={onOpenMasterJournal} className="p-2 text-slate-400 hover:text-white" title="View All Journal Entries"><NotebookText size={20} /></button>
+                    <button onClick={onLogout} className="p-2 text-slate-400 hover:text-white" title="Logout"><LogOut size={20} /></button>
                 </div>
             </div>
             <div className="w-full bg-slate-700 rounded-full h-2.5"><div className="bg-gradient-to-r from-teal-400 to-sky-500 h-2.5 rounded-full transition-all duration-500" style={{ width: `${progress}%` }}></div></div>
-            <p className="text-center text-sky-300 mt-2 text-sm font-semibold">{currentWeek <= 8 ? `Week ${currentWeek} of 8` : 'Course Complete!'}</p>
+            <p className="text-center text-sky-300 mt-2 text-sm font-semibold">{currentWeek <= 24 ? `Week ${currentWeek} of 24` : 'Course Complete!'}</p>
         </header>
     )
 };
-
-const WeekCard = ({ weekData, currentWeek, onLearnMore, onSetWeek, onAdvanceWeek, journalEntries }) => {
-    const { week, title, concept, icon: Icon, isConclusion, isIntro, dailyLessons } = weekData;
+const WeekCard = ({ weekData, currentWeek, onLearnMore, onSetWeek, onAdvanceWeek, journalEntries, access, onUnlock }) => {
+    const { week, title, concept, icon: Icon, isConclusion, isIntro, dailyLessons, block } = weekData;
     const isCompleted = week < currentWeek;
     const isCurrent = week === currentWeek;
-    const isLocked = week > currentWeek;
+    
+    const isPaywalled = (block === 2 && !access.block2) || (block === 3 && !access.block3);
+    const isLocked = week > currentWeek && !isPaywalled;
+
     const [isExpanded, setIsExpanded] = useState(isCurrent || isIntro);
 
     const countUniqueJournalDays = (entries) => {
@@ -156,24 +108,25 @@ const WeekCard = ({ weekData, currentWeek, onLearnMore, onSetWeek, onAdvanceWeek
     const canAdvance = uniqueJournalDays >= 5;
 
     const handleHeaderClick = () => {
-        if (isLocked) return;
+        if (isLocked || isPaywalled) return;
         setIsExpanded(!isExpanded);
     };
     
     let cardClasses = 'border-l-4 transition-all duration-300 ';
-    let headerClasses = isLocked ? 'cursor-not-allowed' : 'cursor-pointer';
+    let headerClasses = (isLocked || isPaywalled) ? 'cursor-not-allowed' : 'cursor-pointer';
     if (isCurrent) cardClasses += 'bg-slate-800/80 border-teal-400 shadow-lg shadow-teal-500/10';
     else if (isCompleted || isIntro) cardClasses += 'bg-slate-800/30 border-sky-500';
+    else if (isPaywalled) cardClasses += 'bg-slate-800/10 border-yellow-500';
     else { cardClasses += 'bg-slate-800/10 border-slate-700'; }
 
     return (
         <div className={`rounded-xl overflow-hidden mb-4 ${cardClasses}`}>
             <div className={`p-4 flex justify-between items-center ${headerClasses}`} onClick={handleHeaderClick}>
-                <div className="flex items-center"><div className={`flex items-center justify-center w-10 h-10 rounded-full mr-4 ${isCurrent ? 'bg-teal-400/20 text-teal-300' : 'bg-slate-700 text-slate-300'}`}>{isLocked ? <Lock size={20} /> : (isCompleted || isConclusion || isIntro) ? <CheckCircle size={20} className="text-sky-400" /> : <Icon size={20} />}</div><h2 className={`text-xl font-bold ${isCurrent ? 'text-white' : 'text-slate-300'}`}>{isIntro || isConclusion ? title : `Week ${week}: ${title}`}</h2></div>
-                {!isLocked && <ChevronDown className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />}
+                <div className="flex items-center"><div className={`flex items-center justify-center w-10 h-10 rounded-full mr-4 ${isCurrent ? 'bg-teal-400/20 text-teal-300' : 'bg-slate-700 text-slate-300'}`}>{isLocked || isPaywalled ? <Lock size={20} /> : (isCompleted || isConclusion || isIntro) ? <CheckCircle size={20} className="text-sky-400" /> : <Icon size={20} />}</div><h2 className={`text-xl font-bold ${isCurrent ? 'text-white' : 'text-slate-300'}`}>{isIntro || isConclusion ? title : `Week ${week}: ${title}`}</h2></div>
+                {!(isLocked || isPaywalled) && <ChevronDown className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />}
             </div>
             
-            {isExpanded && !isLocked && (
+            {isExpanded && !isLocked && !isPaywalled && (
                 <div className="p-4 border-t border-slate-700 animate-fade-in">
                     <p className="italic text-slate-300 mb-6 text-center">"{concept}"</p>
                     {isIntro ? (
@@ -194,12 +147,20 @@ const WeekCard = ({ weekData, currentWeek, onLearnMore, onSetWeek, onAdvanceWeek
                                 ))}
                            </div>
                            <p className="text-center text-sm text-slate-400 mb-4">You have journaled on {uniqueJournalDays} of the required 5 days this week.</p>
-                            {isCurrent && week < 8 && (<div className="mt-6 text-center"><button onClick={onAdvanceWeek} disabled={!canAdvance} className="bg-teal-500 hover:bg-teal-400 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all transform disabled:scale-100 hover:scale-105"><span>{canAdvance ? "Complete Week & Unlock Next" : `Journal on ${5 - uniqueJournalDays} more day(s) to unlock`}</span></button></div>)}
-                            {isCurrent && week === 8 && (<div className="mt-6 text-center"><button onClick={onAdvanceWeek} disabled={!canAdvance} className="bg-teal-500 hover:bg-teal-400 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all transform disabled:scale-100 hover:scale-105"><span>{canAdvance ? "Finish Course & View Conclusion" : `Journal on ${5-uniqueJournalDays} more day(s)`}</span></button></div>)}
+                            {isCurrent && week < 24 && (<div className="mt-6 text-center"><button onClick={onAdvanceWeek} disabled={!canAdvance} className="bg-teal-500 hover:bg-teal-400 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all transform disabled:scale-100 hover:scale-105"><span>{canAdvance ? "Complete Week & Unlock Next" : `Journal on ${5 - uniqueJournalDays} more day(s) to unlock`}</span></button></div>)}
+                            {isCurrent && week === 24 && (<div className="mt-6 text-center"><button onClick={onAdvanceWeek} disabled={!canAdvance} className="bg-teal-500 hover:bg-teal-400 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all transform disabled:scale-100 hover:scale-105"><span>{canAdvance ? "Finish Course & View Conclusion" : `Journal on ${5-uniqueJournalDays} more day(s)`}</span></button></div>)}
                         </>
                     ) : (
                          <div className="bg-slate-900/50 rounded-lg p-4 border border-slate-700 text-slate-300"><p>{weekData.deeperDive}</p></div>
                     )}
+                </div>
+            )}
+             {isPaywalled && (
+                <div className="p-4 text-center">
+                    <button onClick={() => onUnlock(block)} className="bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-bold py-3 px-6 rounded-lg flex items-center justify-center mx-auto">
+                        <ShoppingCart className="mr-2" size={20} />
+                        Unlock Block {block}: Advanced Training
+                    </button>
                 </div>
             )}
         </div>
@@ -279,6 +240,7 @@ const AppCore = ({ user }) => {
     const [editingEntry, setEditingEntry] = useState(null);
     const [journalInput, setJournalInput] = useState('');
     const [isListening, setIsListening] = useState(false);
+    const [access, setAccess] = useState({ block2: false, block3: false });
 
     const loadUserData = useCallback(async (uid) => {
         if (!uid) return; setLoading(true);
@@ -289,11 +251,16 @@ const AppCore = ({ user }) => {
                 const data = docSnap.data();
                 setCurrentWeek(data.currentWeek || 1);
                 setJournalEntries(data.journalEntries || {});
+                setAccess({
+                    block2: data.access?.block2 || false,
+                    block3: data.access?.block3 || false
+                });
             } else {
-                const newUserData = { currentWeek: 1, journalEntries: {} };
+                const newUserData = { currentWeek: 1, journalEntries: {}, access: { block2: false, block3: false } };
                 await setDoc(docRef, newUserData);
                 setCurrentWeek(newUserData.currentWeek);
                 setJournalEntries(newUserData.journalEntries);
+                setAccess(newUserData.access);
             }
         } catch (error) { console.error("Error loading user data:", error); } 
         finally { setLoading(false); }
@@ -379,11 +346,26 @@ const AppCore = ({ user }) => {
       await saveUserData({ journalEntries: updatedJournalEntries });
     };
   
-    const handleAdvanceWeek = () => { if (currentWeek < 9) setCurrentWeek(w => w + 1); };
+    const handleAdvanceWeek = () => { if (currentWeek < 25) setCurrentWeek(w => w + 1); };
     const closeModal = () => { setModalType(null); setModalData(null); setIsListening(false); if (recognition) recognition.stop(); };
   
     const handleLogout = () => signOut(auth);
     
+    const handleUnlock = (block) => {
+        setModalData({ block: block });
+        setModalType('payment');
+    }
+
+    const handlePayment = async (block) => {
+        const newAccess = {...access};
+        if(block === 2) newAccess.block2 = true;
+        if(block === 3) newAccess.block3 = true;
+        
+        setAccess(newAccess);
+        await saveUserData({ access: newAccess });
+        closeModal();
+    }
+
     const countUniqueJournalDays = (entries) => {
         if (!entries || entries.length === 0) return 0;
         const dates = entries.map(entry => new Date(entry.date).toDateString());
@@ -393,8 +375,18 @@ const AppCore = ({ user }) => {
     const renderModalContent = () => {
         if (!modalType) return null;
         
-        if (modalType === 'reminder') {
-             return <ReminderModal onClose={closeModal} />;
+        if (modalType === 'payment') {
+            return (
+                <Modal onClose={closeModal} size="md">
+                    <div className="text-center">
+                        <h2 className="text-3xl font-bold text-yellow-400 mb-4">Unlock Advanced Training</h2>
+                        <p className="text-slate-300 mb-6">Take your mental game to the next level by unlocking Block {modalData.block} of the course.</p>
+                        <button onClick={() => handlePayment(modalData.block)} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-lg text-lg">
+                            Simulate Payment & Unlock
+                        </button>
+                    </div>
+                </Modal>
+            );
         }
         if (modalType === 'masterJournal') {
             const allEntries = Object.values(journalEntries).flat().sort((a,b) => new Date(b.date) - new Date(a.date));
@@ -457,9 +449,9 @@ const AppCore = ({ user }) => {
     
     return (
         <div className="bg-slate-900 text-white min-h-screen font-sans">
-            <Header currentWeek={currentWeek} onLogout={handleLogout} onOpenReminders={() => setModalType('reminder')} onOpenMasterJournal={() => setModalType('masterJournal')} />
+            <Header currentWeek={currentWeek} onLogout={handleLogout} onOpenMasterJournal={() => setModalType('masterJournal')} />
             <main className="w-full max-w-4xl mx-auto p-4">
-                {courseContent.map(weekData => ( <WeekCard key={weekData.week} weekData={weekData} currentWeek={currentWeek} onLearnMore={handleLearnMore} onOpenJournal={handleOpenJournal} onSetWeek={setCurrentWeek} onAdvanceWeek={handleAdvanceWeek} uniqueJournalDays={countUniqueJournalDays(journalEntries[weekData.week])} journalEntries={journalEntries}/> ))}
+                {courseContent.map(weekData => ( <WeekCard key={weekData.week} weekData={weekData} currentWeek={currentWeek} onLearnMore={handleLearnMore} onOpenJournal={handleOpenJournal} onSetWeek={setCurrentWeek} onAdvanceWeek={handleAdvanceWeek} journalEntries={journalEntries} access={access} onUnlock={handleUnlock} /> ))}
             </main>
             <footer className="text-center p-4">
                 <p className="text-slate-500 text-xs">Your progress is saved automatically.</p>
@@ -469,79 +461,6 @@ const AppCore = ({ user }) => {
         </div>
     );
 }
-
-const ReminderModal = ({ onClose }) => {
-    const [reminders, setReminders] = useState([
-        { enabled: false, time: '08:00' },
-        { enabled: false, time: '18:00' }
-    ]);
-
-    useEffect(() => {
-        const savedReminders = localStorage.getItem('reminders');
-        if (savedReminders) {
-            setReminders(JSON.parse(savedReminders));
-        }
-    }, []);
-
-    const handleSave = async () => {
-        const wantsToEnable = reminders.some(r => r.enabled);
-        if (wantsToEnable && typeof Notification !== 'undefined' && Notification.permission === 'denied') {
-            alert("Notifications are blocked in your browser settings. Please enable them to receive reminders.");
-            return;
-        }
-        if (wantsToEnable && typeof Notification !== 'undefined' && Notification.permission === 'default') {
-            const permission = await Notification.requestPermission();
-            if (permission !== 'granted') {
-                alert("Permission was not granted. Reminders will remain off.");
-                const disabledReminders = reminders.map(r => ({ ...r, enabled: false }));
-                localStorage.setItem('reminders', JSON.stringify(disabledReminders));
-                setReminders(disabledReminders);
-                return;
-            }
-        }
-        localStorage.setItem('reminders', JSON.stringify(reminders));
-        alert("Reminder settings saved!");
-        onClose();
-    };
-
-    const handleToggle = (index) => {
-        const newReminders = [...reminders];
-        newReminders[index].enabled = !newReminders[index].enabled;
-        setReminders(newReminders);
-    };
-
-    const handleTimeChange = (index, time) => {
-        const newReminders = [...reminders];
-        newReminders[index].time = time;
-        setReminders(newReminders);
-    };
-
-    return (
-        <Modal onClose={onClose} size="md">
-            <h2 className="text-3xl font-bold text-sky-400 mb-4">Daily Reminders</h2>
-            <p className="text-slate-300 mb-6 text-sm">Set up to two daily reminders. Note: For these web-based notifications to work, your browser must be running at the scheduled time.</p>
-            {reminders.map((reminder, index) => (
-                 <div key={index} className="space-y-4 bg-slate-900/50 p-4 rounded-lg mb-4">
-                    <div className="flex items-center justify-between">
-                        <label htmlFor={`reminder-toggle-${index}`} className="font-semibold text-lg">{`Reminder ${index + 1}`}</label>
-                        <div className="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id={`reminder-toggle-${index}`} className="sr-only peer" checked={reminder.enabled} onChange={() => handleToggle(index)} />
-                            <div className="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
-                        </div>
-                    </div>
-                     <div className={`transition-opacity ${reminder.enabled ? 'opacity-100' : 'opacity-50'}`}>
-                        <div className="flex items-center justify-between">
-                           <label htmlFor={`reminder-time-${index}`} className="font-semibold">Time</label>
-                           <input type="time" id={`reminder-time-${index}`} disabled={!reminder.enabled} value={reminder.time} onChange={e => handleTimeChange(index, e.target.value)} className="bg-slate-700 border border-slate-600 rounded-md p-1"/>
-                        </div>
-                    </div>
-                </div>
-            ))}
-             <button onClick={handleSave} className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-lg mt-6">Save Settings</button>
-        </Modal>
-    );
-};
-
 
 // --- Top-Level Component ---
 export default function App() {
