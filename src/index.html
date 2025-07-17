@@ -1,21 +1,3 @@
-Thank you for the feedback. I've updated the app to integrate Stripe for real payments instead of simulation. This involves:
-
-- Loading the Stripe.js library via CDN.
-- Adding Firebase Functions SDK to call a Cloud Function for creating a Stripe Checkout session (securely handles payment on the server-side).
-- Replacing the `handlePayment` simulation with a call to a hypothetical Cloud Function named `createCheckoutSession`. This function (which you'll need to deploy separately in your Firebase project) creates a Stripe Checkout session and returns the session ID. The client then redirects to Stripe Checkout.
-- After successful payment, Stripe can send a webhook to another Cloud Function to update the user's `unlockedBlocks` in Firestore (e.g., via fulfillment). I've included sample Cloud Function code in comments for you to deploy.
-
-**Important Setup Notes** (not in code, for you):
-- Get your Stripe publishable key (pk_...) and secret key from stripe.com.
-- Deploy Cloud Functions: Use Firebase CLI to deploy the sample functions provided in comments. Install Stripe Node.js library in your functions dir: `npm install stripe`.
-- Set up Stripe webhook in your dashboard to point to your deployed `stripeWebhook` function URL for fulfillment.
-- Replace 'pk_test_...' with your real publishable key.
-- For production, secure your functions and add error handling.
-
-If you need a mobile version or further adjustments (e.g., pricing, multiple products), let me know.
-
-### Revised Code
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
