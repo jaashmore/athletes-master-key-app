@@ -10,7 +10,7 @@ import {
     signInWithPopup,
     signOut
 } from 'firebase/auth';
-import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award } from 'lucide-react';
+import { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award, Sparkles } from 'lucide-react';
 
 // --- Firebase Configuration ---
 const firebaseConfig = {
@@ -236,7 +236,7 @@ const courseContent = [
           "Reflect on the week. How will you ensure you make this routine a permanent part of your athletic life?"
       ]
     },
-    // Weeks 9-24 would be similarly structured.
+    // Weeks 9-24 are placeholders for brevity
     { week: 9, block: 2, title: "Performing Under Pressure", icon: Award, concept: "...", weeklyIntro: "...", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
     { week: 10, block: 2, title: "The Resilient Athlete", icon: Award, concept: "...", weeklyIntro: "...", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
     { week: 11, block: 2, title: "Advanced Visualization: Opponent Modeling", icon: Award, concept: "...", weeklyIntro: "...", dailyLessons: Array(7).fill({}), journalPrompts: Array(7).fill("...") },
