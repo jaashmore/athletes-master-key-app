@@ -1,0 +1,343 @@
+Thank you for the feedback. I've updated the app to integrate Stripe for real payments instead of simulation. This involves:
+
+- Loading the Stripe.js library via CDN.
+- Adding Firebase Functions SDK to call a Cloud Function for creating a Stripe Checkout session (securely handles payment on the server-side).
+- Replacing the `handlePayment` simulation with a call to a hypothetical Cloud Function named `createCheckoutSession`. This function (which you'll need to deploy separately in your Firebase project) creates a Stripe Checkout session and returns the session ID. The client then redirects to Stripe Checkout.
+- After successful payment, Stripe can send a webhook to another Cloud Function to update the user's `unlockedBlocks` in Firestore (e.g., via fulfillment). I've included sample Cloud Function code in comments for you to deploy.
+
+**Important Setup Notes** (not in code, for you):
+- Get your Stripe publishable key (pk_...) and secret key from stripe.com.
+- Deploy Cloud Functions: Use Firebase CLI to deploy the sample functions provided in comments. Install Stripe Node.js library in your functions dir: `npm install stripe`.
+- Set up Stripe webhook in your dashboard to point to your deployed `stripeWebhook` function URL for fulfillment.
+- Replace 'pk_test_...' with your real publishable key.
+- For production, secure your functions and add error handling.
+
+If you need a mobile version or further adjustments (e.g., pricing, multiple products), let me know.
+
+### Revised Code
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Mental Gym</title>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-auth.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-firestore.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-functions.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide-react@0.263.0/dist/umd/lucide-react.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+        const { initializeApp } = firebase;
+        const { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, updateDoc } = firebase.firestore;
+        const { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } = firebase.auth;
+        const { getFunctions, httpsCallable } = firebase.functions;
+        const { Dribbble, Target, BrainCircuit, NotebookText, Star, Mic, MicOff, Lock, ChevronDown, CheckCircle, Plus, Edit2, Trash2, LogOut, BookOpen, Award, ShoppingCart, Bell } = LucideReact;
+
+        // Firebase Configuration (use environment variables in production)
+        const firebaseConfig = {
+            apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "YOUR_API_KEY",
+            authDomain: "athlete-s-master-key.firebaseapp.com",
+            projectId: "athlete-s-master-key",
+            storageBucket: "athlete-s-master-key.appspot.com",
+            messagingSenderId: "850364511378",
+            appId: "1:850364511378:web:d395ee2c99a61e349da24b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const functions = getFunctions(app);
+        const appId = 'athlete-s-master-key';
+
+        // Stripe publishable key (replace with your own from Stripe dashboard)
+        const stripePromise = Stripe('pk_test_YourPublishableKeyHere');
+
+        // Full 24-Week Course Content (unchanged from previous)
+        const courseContent = [
+            // ... (omitted for brevity; insert the full courseContent array from the previous version here)
+        ];
+
+        // Main App Component
+        const App = () => {
+            const [user, setUser] = useState(null);
+            const [currentWeek, setCurrentWeek] = useState(0);
+            const [journalEntries, setJournalEntries] = useState([]);
+            const [progress, setProgress] = useState(0);
+            const [unlockedBlocks, setUnlockedBlocks] = useState([1]); // Block 1 unlocked by default
+            const [isJournalModalOpen, setIsJournalModalOpen] = useState(false);
+            const [currentDay, setCurrentDay] = useState(1);
+            const [notificationPermission, setNotificationPermission] = useState('default');
+            const [paymentLoading, setPaymentLoading] = useState(false);
+
+            useEffect(() => {
+                const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+                    setUser(currentUser);
+                    if (currentUser) {
+                        await loadUserData(currentUser.uid);
+                    }
+                });
+                return unsubscribe;
+            }, []);
+
+            const loadUserData = async (uid) => {
+                try {
+                    const userDoc = doc(db, 'users', uid);
+                    const userSnap = await getDoc(userDoc);
+                    if (userSnap.exists()) {
+                        const data = userSnap.data();
+                        setCurrentWeek(data.currentWeek || 0);
+                        setProgress(data.progress || 0);
+                        setUnlockedBlocks(data.unlockedBlocks || [1]);
+                    }
+                    const entriesCollection = collection(db, 'users', uid, 'journalEntries');
+                    const entriesSnap = await getDocs(entriesCollection);
+                    const entries = entriesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    setJournalEntries(entries);
+                } catch (error) {
+                    console.error("Error loading user data:", error);
+                }
+            };
+
+            const saveUserData = async () => {
+                if (user) {
+                    try {
+                        const userDoc = doc(db, 'users', user.uid);
+                        await setDoc(userDoc, {
+                            currentWeek,
+                            progress,
+                            unlockedBlocks
+                        }, { merge: true });
+                    } catch (error) {
+                        console.error("Error saving user data:", error);
+                    }
+                }
+            };
+
+            useEffect(() => {
+                saveUserData();
+            }, [currentWeek, progress, unlockedBlocks]);
+
+            const countUniqueJournalDays = () => {
+                const uniqueDays = new Set(journalEntries.map(entry => new Date(entry.timestamp).toDateString()));
+                return uniqueDays.size;
+            };
+
+            useEffect(() => {
+                const uniqueDays = countUniqueJournalDays();
+                setProgress((uniqueDays / 5) * 100); // Assuming 5 days to advance
+                if (uniqueDays >= 5 && currentWeek < courseContent.length - 1) {
+                    setCurrentWeek(prev => prev + 1);
+                }
+            }, [journalEntries]);
+
+            const handlePayment = async (block) => {
+                setPaymentLoading(true);
+                try {
+                    const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
+                    const result = await createCheckoutSession({ userId: user.uid, block }); // Pass block or product info
+                    const sessionId = result.data.sessionId;
+                    const stripe = await stripePromise;
+                    const { error } = await stripe.redirectToCheckout({ sessionId });
+                    if (error) {
+                        console.error("Stripe checkout error:", error);
+                    }
+                } catch (error) {
+                    console.error("Payment initiation error:", error);
+                } finally {
+                    setPaymentLoading(false);
+                }
+            };
+
+            const requestNotificationPermission = () => {
+                if ('Notification' in window) {
+                    Notification.requestPermission().then(perm => setNotificationPermission(perm));
+                }
+            };
+
+            const sendNotification = (message) => {
+                if (notificationPermission === 'granted') {
+                    new Notification('Your Mental Gym', { body: message });
+                }
+            };
+
+            if (!user) {
+                return <Login setUser={setUser} />;
+            }
+
+            return (
+                <div className="min-h-screen bg-gray-100 p-4">
+                    <header className="flex justify-between items-center mb-4">
+                        <h1 className="text-2xl font-bold">Your Mental Gym</h1>
+                        <button onClick={() => signOut(auth)} className="flex items-center">
+                            <LogOut className="mr-2" /> Log Out
+                        </button>
+                    </header>
+                    <div className="mb-4">
+                        <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${progress}%` }}></div>
+                        </div>
+                        <p>Progress: {progress}% (Journal 5 unique days to advance)</p>
+                    </div>
+                    <CourseNavigation
+                        currentWeek={currentWeek}
+                        setCurrentWeek={setCurrentWeek}
+                        unlockedBlocks={unlockedBlocks}
+                        handlePayment={handlePayment}
+                        paymentLoading={paymentLoading}
+                    />
+                    <CourseWeek
+                        weekData={courseContent[currentWeek]}
+                        setIsJournalModalOpen={setIsJournalModalOpen}
+                        setCurrentDay={setCurrentDay}
+                    />
+                    <JournalList entries={journalEntries.filter(e => e.week === currentWeek)} />
+                    {isJournalModalOpen && (
+                        <JournalModal
+                            week={currentWeek}
+                            day={currentDay}
+                            prompt={courseContent[currentWeek].journalPrompts[currentDay - 1]}
+                            onClose={() => setIsJournalModalOpen(false)}
+                            onSave={async (entry) => {
+                                try {
+                                    const entriesCollection = collection(db, 'users', user.uid, 'journalEntries');
+                                    const newEntry = await addDoc(entriesCollection, {
+                                        week: currentWeek,
+                                        day: currentDay,
+                                        content: entry,
+                                        timestamp: Date.now()
+                                    });
+                                    setJournalEntries(prev => [...prev, { id: newEntry.id, week: currentWeek, day: currentDay, content: entry, timestamp: Date.now() }]);
+                                    setIsJournalModalOpen(false);
+                                    sendNotification('Journal entry saved! Keep building your mental strength.');
+                                } catch (error) {
+                                    console.error("Error saving journal:", error);
+                                }
+                            }}
+                        />
+                    )}
+                    <button onClick={requestNotificationPermission} className="mt-4 flex items-center">
+                        <Bell className="mr-2" /> Enable Reminders
+                    </button>
+                </div>
+            );
+        };
+
+        // Login Component (unchanged)
+        const Login = ({ setUser }) => {
+            // ... (omitted for brevity; same as previous)
+        };
+
+        // Course Navigation Component (updated for payment loading)
+        const CourseNavigation = ({ currentWeek, setCurrentWeek, unlockedBlocks, handlePayment, paymentLoading }) => {
+            return (
+                <div className="mb-4">
+                    <h2 className="text-xl font-bold mb-2">Course Blocks</h2>
+                    {[1, 2, 3].map(block => (
+                        <div key={block} className="mb-2">
+                            <h3>Block {block}: Weeks {(block-1)*8 + 1} - {block*8}</h3>
+                            {unlockedBlocks.includes(block) ? (
+                                <select
+                                    value={currentWeek}
+                                    onChange={(e) => setCurrentWeek(parseInt(e.target.value))}
+                                    className="p-2 border rounded"
+                                >
+                                    {courseContent.filter(w => (w.block === block || (block === 1 && !w.block))).map(w => (
+                                        <option key={w.week} value={w.week}>Week {w.week}: {w.title}</option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <button 
+                                    onClick={() => handlePayment(block)} 
+                                    disabled={paymentLoading}
+                                    className="flex items-center bg-yellow-500 text-white p-2 rounded"
+                                >
+                                    <ShoppingCart className="mr-2" /> {paymentLoading ? 'Processing...' : `Unlock Block ${block}`}
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        // Course Week Component (unchanged)
+        const CourseWeek = ({ weekData, setIsJournalModalOpen, setCurrentDay }) => {
+            // ... (omitted for brevity; same as previous)
+        };
+
+        // Journal Modal Component (unchanged)
+        const JournalModal = ({ week, day, prompt, onClose, onSave }) => {
+            // ... (omitted for brevity; same as previous)
+        };
+
+        // Journal List Component (unchanged)
+        const JournalList = ({ entries }) => {
+            // ... (omitted for brevity; same as previous)
+        };
+
+        /* 
+        // Sample Cloud Functions code (deploy this in your Firebase functions/index.js)
+        const functions = require('firebase-functions');
+        const admin = require('firebase-admin');
+        const stripe = require('stripe')('sk_test_YourSecretKeyHere');
+
+        admin.initializeApp();
+
+        exports.createCheckoutSession = functions.https.onCall(async (data, context) => {
+            if (!context.auth) {
+                throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.');
+            }
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: [{
+                    price_data: {
+                        currency: 'usd',
+                        product_data: { name: `Unlock Block ${data.block}` },
+                        unit_amount: 999, // $9.99, adjust as needed
+                    },
+                    quantity: 1,
+                }],
+                mode: 'payment',
+                success_url: 'https://your-app-url/success', // Redirect back after payment
+                cancel_url: 'https://your-app-url/cancel',
+                metadata: { userId: context.auth.uid, block: data.block },
+            });
+            return { sessionId: session.id };
+        });
+
+        exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
+            const sig = req.headers['stripe-signature'];
+            let event;
+            try {
+                event = stripe.webhooks.constructEvent(req.rawBody, sig, 'your_webhook_secret');
+            } catch (err) {
+                return res.status(400).send(`Webhook Error: ${err.message}`);
+            }
+            if (event.type === 'checkout.session.completed') {
+                const session = event.data.object;
+                const userId = session.metadata.userId;
+                const block = parseInt(session.metadata.block);
+                const userRef = admin.firestore().doc(`users/${userId}`);
+                await userRef.update({
+                    unlockedBlocks: admin.firestore.FieldValue.arrayUnion(block)
+                });
+            }
+            res.json({ received: true });
+        });
+        */
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
+```
